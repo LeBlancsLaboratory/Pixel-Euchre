@@ -1,0 +1,41 @@
+[gd_scene load_steps=4 format=3 uid="uid://cd366ms84a0gb"]
+
+[ext_resource type="Script" path="res://PlayerHand.cs" id="1_nyu8a"]
+[ext_resource type="Texture2D" uid="uid://ba72wgy3ppee2" path="res://Images/feltTile.png" id="2_uoskm"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_h1opd"]
+size = Vector2(852, 365)
+
+[node name="Game" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="PlayerHand" type="Control" parent="."]
+anchors_preset = 0
+offset_left = 932.0
+offset_top = 868.0
+offset_right = 972.0
+offset_bottom = 908.0
+mouse_filter = 2
+script = ExtResource("1_nyu8a")
+
+[node name="PlayerHandBoundary" type="Area2D" parent="PlayerHand"]
+position = Vector2(0, -51)
+
+[node name="HandOutline" type="CollisionShape2D" parent="PlayerHand/PlayerHandBoundary"]
+shape = SubResource("RectangleShape2D_h1opd")
+
+[node name="TextureRect" type="TextureRect" parent="PlayerHand/PlayerHandBoundary"]
+offset_left = -426.0
+offset_top = -183.0
+offset_right = 426.0
+offset_bottom = 183.0
+texture = ExtResource("2_uoskm")
+stretch_mode = 1
+
+[connection signal="input_event" from="PlayerHand/PlayerHandBoundary" to="PlayerHand" method="HandleArea2DInput"]

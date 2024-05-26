@@ -1,0 +1,46 @@
+[gd_scene load_steps=5 format=3 uid="uid://c6gmpgaxvo1iq"]
+
+[ext_resource type="Script" path="res://MenuScreen.cs" id="1_bwfqg"]
+[ext_resource type="Script" path="res://PlayBtn.cs" id="1_wa822"]
+[ext_resource type="Script" path="res://ExitBtn.cs" id="2_3o74f"]
+[ext_resource type="Script" path="res://OptBtn.cs" id="2_d8k24"]
+
+[node name="Menu" type="Control"]
+layout_mode = 3
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 0
+script = ExtResource("1_bwfqg")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 0
+offset_left = -188.0
+offset_top = -302.0
+offset_right = 194.0
+offset_bottom = 126.0
+
+[node name="MenuItems" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="PlayBtn" type="Button" parent="MarginContainer/MenuItems"]
+custom_minimum_size = Vector2(0, 75)
+layout_mode = 2
+text = "Play"
+script = ExtResource("1_wa822")
+
+[node name="OptBtn" type="Button" parent="MarginContainer/MenuItems"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+text = "Options"
+script = ExtResource("2_d8k24")
+
+[node name="ExitBtn" type="Button" parent="MarginContainer/MenuItems"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+text = "Exit"
+script = ExtResource("2_3o74f")

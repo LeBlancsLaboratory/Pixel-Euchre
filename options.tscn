@@ -1,0 +1,39 @@
+[gd_scene load_steps=2 format=3 uid="uid://3noqn7amrd1w"]
+
+[ext_resource type="Script" path="res://ResDropdown.cs" id="1_yeqv2"]
+
+[node name="Options" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="SettingsGrid" type="GridContainer" parent="."]
+layout_mode = 0
+offset_right = 1921.0
+offset_bottom = 1076.0
+
+[node name="ResContainer" type="HBoxContainer" parent="SettingsGrid"]
+layout_mode = 2
+
+[node name="ResLabel" type="RichTextLabel" parent="SettingsGrid/ResContainer"]
+custom_minimum_size = Vector2(175, 0)
+layout_mode = 2
+text = "Display Resolution"
+visible_characters = 18
+
+[node name="ResDropdown" type="OptionButton" parent="SettingsGrid/ResContainer"]
+layout_mode = 2
+item_count = 3
+selected = 0
+popup/item_0/text = "1920x1080"
+popup/item_0/id = 0
+popup/item_1/text = "2560x1440"
+popup/item_1/id = 1
+popup/item_2/text = "1152x648"
+popup/item_2/id = 2
+script = ExtResource("1_yeqv2")
+
+[connection signal="item_selected" from="SettingsGrid/ResContainer/ResDropdown" to="SettingsGrid/ResContainer/ResDropdown" method="OnItemSelected"]

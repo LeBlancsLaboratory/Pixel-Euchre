@@ -1,0 +1,24 @@
+[gd_scene load_steps=4 format=3 uid="uid://bkoatndadknnd"]
+
+[ext_resource type="Script" path="res://CardModel.cs" id="1_a21xv"]
+[ext_resource type="Texture2D" uid="uid://cnf2vgjck5qua" path="res://Images/seven of clubs.png" id="1_n3w3y"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_v38uc"]
+size = Vector2(110, 158)
+
+[node name="CardModel" type="Node2D"]
+visible = false
+position = Vector2(54, 80)
+script = ExtResource("1_a21xv")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2(0.180218, 0.180218)
+texture = ExtResource("1_n3w3y")
+
+[node name="Area2D" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+shape = SubResource("RectangleShape2D_v38uc")
+
+[connection signal="mouse_entered" from="Area2D" to="." method="OnMouseEnter"]
+[connection signal="mouse_exited" from="Area2D" to="." method="OnMouseExit"]
