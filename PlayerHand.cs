@@ -1,52 +1,10 @@
 using EuchreObjects;
 using Godot;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Resolvers;
-
-/// <summary>
-/// Denotes a fixed hand position from within the PlayerHand Control
-/// </summary>
-public class HandPosition {
-	private Vector2 position;
-	private float rotation; // rotation as radians
-	private Card occupiedBy;
-
-	public HandPosition(Vector2 position, float rotation) {
-		this.position = position;
-		this.rotation = rotation;
-	}
-
-	public HandPosition(Vector2 position, float rotation, Card occupant) {
-		this.position = position;
-		this.rotation = rotation;
-		occupiedBy = occupant; // occupiedBy is still a member, occupant makes more sense to me as a param name
-	}
-
-	public void acceptTenant(Card newOccupant) {
-		// assume eviction prior to new tenant
-		occupiedBy = newOccupant;
-		occupiedBy.SetRotationRad(rotation);
-		occupiedBy.SetPosition(position);
-	}
-
-	public Card evictTenant() {
-		var oldTenant = occupiedBy;
-		occupiedBy = null;
-		return oldTenant;
-	}
-	
-	public void ResetTenantOrientation() {
-		occupiedBy.SetRotationRad(rotation);
-		occupiedBy.SetPosition(position);
-	}
-
-	public bool CanSnap(Card card) {
-		// figure out a tolerance for snappage
-		return false;
-	}
-}
 
 public partial class PlayerHand : Control
 {
@@ -60,13 +18,9 @@ public partial class PlayerHand : Control
 	private Card draggingCard;
 	private bool dragging = false;
 	private Vector2 draggingCardOffset;
-	// the hand position to return to if new snap fails
-	private HandPosition draggingLastHandPosition;
 	// collection of cards in the client player's hand.
 	// the index order of this also represents the draw order. drawn from left to right
 	private List<Card> cardsInHand = new List<Card>();
-	// left to right hand positions. automated to set card position for snapping
-	private List<HandPosition> handPositions = new List<HandPosition>();
 
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready() {
@@ -80,18 +34,51 @@ public partial class PlayerHand : Control
 		centerX = hbPosition.X + (hbSize.X / 2);
 		centerY = hbPosition.Y + (hbSize.Y / 2);
 
+		CardModel templateCard = (CardModel)GD.Load<PackedScene>("res://card_model.tscn").Instantiate(); // should get garbage collected?
+
+		float halfCardWidth = ((CollisionShape2D)templateCard.FindChild("Area2D").FindChild("CollisionShape2D")).Shape.GetRect().Size.X / 2; // yuck
+		float fifteenthCardHeight = ((CollisionShape2D)templateCard.FindChild("Area2D").FindChild("CollisionShape2D")).Shape.GetRect().Size.Y / 15; // yuck still
+
+		float newCardPosX = halfCardWidth * -2;
+
 		for (int i = 0; i < 5; i++) {
 			CardModel newCardModel = (CardModel)GD.Load<PackedScene>("res://card_model.tscn").Instantiate();
 			AddChild(newCardModel);
 
-			newCardModel.Position = new Vector2((float)centerX, (float)centerY);
+			float newY = centerY;
+			switch (Math.Abs(i - 2)) {
+				case 1:
+					newY = centerY + fifteenthCardHeight / 2;
+					break;
+				case 2:
+					newY = (float)(centerY + fifteenthCardHeight * 1.5);
+					break;
+			}
+
+			newCardModel.Position = new Vector2(newCardPosX, newY);
+			newCardPosX += halfCardWidth;
 
 			newCardModel.Visible = true;
 			Card newCard = new Card(EuchreEnums.Suit.Clubs, 7, "7", newCardModel);
 
+			setCardRotationInHandArea(newCard);
+
 			cardsInHand.Add(newCard);
 		}
+
+		RefreshCardDrawOrder();
     }
+
+	private void setCardRotationInHandArea(Card card) {
+		float newRotation = new();
+		if (card.GetModel().Position.X > centerX) {
+			newRotation = (float)(Math.PI / 2 / rightBoundary) * (float)(card.GetModel().Position.X / 2);
+		} else if (card.GetModel().Position.X < centerX) {
+			newRotation = (float)(Math.PI / 2 / leftBoundary) * -(float)(card.GetModel().Position.X / 2);
+		}
+
+		card.SetRotationRad(newRotation);
+	}
 
     // Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta) {
@@ -102,19 +89,12 @@ public partial class PlayerHand : Control
 			} else {
 				draggingCard.SetPosition(newPosition);
 
-				float newRotation = new();
-				if (newPosition.X > centerX) {
-					newRotation = (float)(Math.PI / rightBoundary) * (float)(newPosition.X / 2);
-				} else if (newPosition.X < centerX) {
-					newRotation = (float)(Math.PI / leftBoundary) * -(float)(newPosition.X / 2);
-				}
-				
-				draggingCard.SetRotationRad(newRotation);
+				setCardRotationInHandArea(draggingCard);
 			}
 		}
 	}
 
-	private void HitTest() {
+	private void HitLogic() {
 		int idx = 0;
 		foreach (Card card in cardsInHand) {
 			if (card.HitTest()) {
@@ -125,7 +105,7 @@ public partial class PlayerHand : Control
 
 				Card newTop = cardsInHand[idx];
 				cardsInHand.RemoveAt(idx);
-				cardsInHand.Insert(0, newTop);
+				cardsInHand.Add(newTop);
 				RefreshCardDrawOrder();
 
 				break;
@@ -138,7 +118,7 @@ public partial class PlayerHand : Control
 		if (inputEvent is InputEventMouseButton mouseEvent && mouseEvent.ButtonIndex == MouseButton.Left) {
 			if (inputEvent.IsPressed()) {
 				if (!dragging) {
-					HitTest();
+					HitLogic();
 				}
 				dragging = true;
 			} else {
@@ -161,8 +141,8 @@ public partial class PlayerHand : Control
 	private void RefreshCardDrawOrder() {
 		int newZIndex = cardsInHand.Count + 1;
 
-		foreach (Card card in cardsInHand) {
-			card.GetModel().ZIndex = newZIndex;
+		for (int i = cardsInHand.Count - 1; i >= 0; i--) {
+			cardsInHand[i].GetModel().ZIndex = newZIndex;
 			newZIndex--;
 		}
 	}

@@ -15,7 +15,7 @@ public class Card
 	private int rank;
 	private string name;
 
-	private HandPosition home;
+	// private HandPosition home;
 	
 	public Card(Suit suit, int rank, string name) {
 		// TODO: logic for setting image (and i have to create the images)
@@ -86,6 +86,13 @@ public class Card
 		}
 	}
 
+	public void SetPosition(float newX, float newY) {
+		Vector2 newPosition = new Vector2(newX, newY);
+		if (cardModel != null) {
+			cardModel.Position = newPosition;
+		}
+	}
+
 	public float? GetRotationDeg() {
 		if (cardModel != null) {
 			return cardModel.RotationDegrees;
@@ -112,13 +119,13 @@ public class Card
 		}
 	}
 
-	public void SetHomeInHand(HandPosition handPosition) {
-		home = handPosition;
-	}
+	// public void SetHomeInHand(HandPosition handPosition) {
+	// 	home = handPosition;
+	// }
 
 	
 
-	public HandPosition GetHomeInHand() {
-		return home;
-	}
+	// public HandPosition GetHomeInHand() {
+	// 	return home;
+	// }
 }
