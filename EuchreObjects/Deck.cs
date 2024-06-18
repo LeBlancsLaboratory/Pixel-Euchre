@@ -5,6 +5,7 @@ using Godot;
 using System;
 using System.Collections.Generic;
 
+
 public class Deck
 {
 	private List<Card> cards;
@@ -42,7 +43,20 @@ public class Deck
 						break;
 				}
 
-				cards.Add(new Card(rank: i, suit: suit, name: cardName));
+				Card newCard = new(rank: i, suit: suit, name: cardName);
+				CardModel newCardModel = (CardModel)GD.Load<PackedScene>("res://card_model.tscn").Instantiate();
+
+				//TODO: add texture to card front and back
+				/* example: 
+
+				Image cardImageFront = GD.Load<Image>("res://Images/seven of clubs.png");
+				ImageTexture cardTextureFront = ImageTexture.CreateFromImage(cardImageFront);
+				((Sprite2D)newCardModel.FindChild("Sprite2D")).Texture = cardTextureFront;
+
+				*/
+
+				newCard.SetModel(newCardModel);
+				cards.Add(newCard);
 			}
 		}
 	}

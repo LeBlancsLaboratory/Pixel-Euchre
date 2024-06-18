@@ -15,6 +15,8 @@ public class Card
 	private int rank;
 	private string name;
 
+	private HandPosition currentPos;
+
 	// private HandPosition home;
 	
 	public Card(Suit suit, int rank, string name) {
@@ -117,6 +119,16 @@ public class Card
 		if (cardModel != null) {
 			cardModel.Rotation = newRot;
 		}
+	}
+
+	public void SetCurrentHandPos(HandPosition pos) {
+		if (pos != null) {
+			currentPos = pos;
+		}
+	}
+
+	public HandPosition GetCurrentHandPos() {
+		return currentPos;
 	}
 
 	// public void SetHomeInHand(HandPosition handPosition) {
