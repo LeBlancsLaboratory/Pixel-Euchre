@@ -17,7 +17,8 @@ public partial class PlayerHand : Control
 	private Card draggingCard;
 	private bool dragging = false;
 	private Vector2 draggingCardOffset;
-	private HandPosition lastSnappedTo;
+	private HandPosition lastEntered;
+	private HandPosition startingPosition;
 	// collection of cards in the client player's hand.
 	// the index order of this also represents the draw order. drawn from left to right
 	private List<Card> cardsInHand = new List<Card>();
@@ -80,6 +81,8 @@ public partial class PlayerHand : Control
 			cardsInHand.Add(newCard);
 
 			handPositions[i].AcceptNewCard(newCard);
+			handPositions[i].SetOccupantPosition(); // call this manually now
+			SetCardRotationInHandArea(newCard);
 		}
 
 		RefreshCardDrawOrder();
@@ -109,43 +112,51 @@ public partial class PlayerHand : Control
 			} else {
 				draggingCard.SetPosition(newPosition);
 				SetCardRotationInHandArea(draggingCard);
-
-				TestSnap();
+				TestPositionEntered();
 			}
 		}
 	}
 
-	private void TestSnap() {
+	private void TestPositionEntered() {
 		for (int i = handPositions.Count - 1; i >= 0; i--) {
 			if (handPositions[i].HitTest()) {
-				var oldCard = handPositions[i].ClearCard();
-				if (handPositions[i].GetPosInHand() > lastSnappedTo.GetPosInHand()) {
-					handPositions[i - 1].AcceptNewCard(oldCard);
-				} else {
-					handPositions[i + i].AcceptNewCard(oldCard);
-				}
+				if (lastEntered.GetPosInHand() != i) {
+					var card = handPositions[i].ClearCard();
+					lastEntered.AcceptNewCard(card);
+					// animate to new pos
+					Tween tween = GetTree().CreateTween();
+					tween.SetParallel();
+					tween.TweenProperty(card.GetModel(), "position", lastEntered.Position, 0.1);
+					tween.TweenProperty(card.GetModel(), "rotation", CalcCardRotationFromPosition(lastEntered.Position), 0.1);
 
-				handPositions[i].AcceptNewCard(draggingCard);
-				lastSnappedTo = handPositions[i];
-				
-				RefreshCardDrawOrder();
+					lastEntered = handPositions[i];
+					RefreshCardDrawOrder();
+				}
 				break;
 			}
 		}
 	}
 
 	private void HitLogic() {
-		int idx = 0;
-		foreach (Card card in cardsInHand) {
-			if (card.HitTest()) {
-				draggingCard = card;
+		for (int i = cardsInHand.Count - 1; i >= 0; i--) {
+			if (cardsInHand[i].HitTest()) {
+				dragging = true;
+				draggingCard = cardsInHand[i];
 				if (draggingCard.GetPosition() != null) {
+
+					cardsInHand.RemoveAt(i);
+					cardsInHand.Add(draggingCard);
+
 					draggingCardOffset = (Vector2)draggingCard.GetPosition() - GetLocalMousePosition();
-					lastSnappedTo = draggingCard.GetCurrentHandPos();
+					if (draggingCard.GetCurrentHandPos() != null && draggingCard.GetCurrentHandPos().GetPosInHand() != -1) {
+						lastEntered = draggingCard.GetCurrentHandPos();
+						startingPosition = lastEntered;
+						lastEntered.ClearCard();
+					}
 				}
+				RefreshCardDrawOrder();
 				break;
 			}
-			idx++;
 		}
 	}
 
@@ -155,7 +166,6 @@ public partial class PlayerHand : Control
 				if (!dragging) {
 					HitLogic();
 				}
-				dragging = true;
 			} else {
 				StopDragging();
 			}
@@ -164,21 +174,35 @@ public partial class PlayerHand : Control
 
 
 	private void StopDragging() {
-		dragging = false;
-		lastSnappedTo.AcceptNewCard(draggingCard);
-		draggingCard = null;
-		draggingCardOffset = defaultOffset;
-		// TODO: test snap or return to original position
+		if (draggingCard != null) {
+			lastEntered.AcceptNewCard(draggingCard);
+			lastEntered.SetOccupantPosition();
+			lastEntered = null;
+			startingPosition = null;
+			dragging = false;
+			draggingCard = null;
+			draggingCardOffset = defaultOffset;
+			// TODO: test snap or return to original position
+
+			AlignCardIndexToHandPosition();
+			RefreshCardDrawOrder();
+		}
+	}
+
+	private void AlignCardIndexToHandPosition() {
+		cardsInHand = new List<Card>(); // shouldn't be expensive.
+		foreach (HandPosition pos in handPositions) {
+			cardsInHand.Add(pos.GetCard());
+		}
+		if (dragging) {
+			cardsInHand.Add(draggingCard);
+		}
 	}
 
 	private void RefreshCardDrawOrder() {
-		int newZIndex = 2;
-
-		foreach(HandPosition position in handPositions) {
-			position.GetCard().GetModel().ZIndex = newZIndex;
-			newZIndex++;
-
-			SetCardRotationInHandArea(position.GetCard());
+		for (int i = cardsInHand.Count - 1; i >= 0; i--) {
+			cardsInHand[i].GetModel().ZIndex = i + 2;
+			SetCardRotationInHandArea(cardsInHand[i]);
 		}
 	}
 

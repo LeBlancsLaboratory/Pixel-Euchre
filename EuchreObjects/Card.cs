@@ -122,9 +122,7 @@ public class Card
 	}
 
 	public void SetCurrentHandPos(HandPosition pos) {
-		if (pos != null) {
-			currentPos = pos;
-		}
+		currentPos = pos;
 	}
 
 	public HandPosition GetCurrentHandPos() {

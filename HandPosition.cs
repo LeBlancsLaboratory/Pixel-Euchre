@@ -1,6 +1,7 @@
 using Godot;
 using System;
 using EuchreObjects;
+using System.Xml.Serialization;
 
 public partial class HandPosition : Node2D
 {
@@ -8,7 +9,7 @@ public partial class HandPosition : Node2D
 
 	private bool mouseOverlapping = false;
 
-	private int positionInHand;
+	private int positionInHand = -1;
 
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
@@ -30,12 +31,18 @@ public partial class HandPosition : Node2D
 	
 	public void AcceptNewCard(Card newCard) {
 		occupyingCard = newCard;
-		occupyingCard.SetPosition(Position);
 		occupyingCard.SetCurrentHandPos(this);
+	}
+
+	public void SetOccupantPosition() {
+		if (occupyingCard != null) {
+			occupyingCard.SetPosition(Position);
+		}
 	}
 
 	public Card ClearCard() {
 		Card oldCard = occupyingCard;
+		oldCard.SetCurrentHandPos(new HandPosition());
 		occupyingCard = null;
 		return oldCard; // COULD BE NULL
 	}
