@@ -130,6 +130,7 @@ public partial class PlayerHand : Control
 					tween.TweenProperty(card.GetModel(), "rotation", CalcCardRotationFromPosition(lastEntered.Position), 0.1);
 
 					lastEntered = handPositions[i];
+					AlignCardIndexToHandPosition();
 					RefreshCardDrawOrder();
 				}
 				break;
