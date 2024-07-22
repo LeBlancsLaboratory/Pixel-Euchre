@@ -72,7 +72,7 @@ public partial class PlayerHand : Control
 		for (int i = 0; i < 5; i++) {
 			CardModel newCardModel = (CardModel)GD.Load<PackedScene>("res://card_model.tscn").Instantiate();
 			AddChild(newCardModel);
-			
+
 			newCardModel.Visible = true;
 
 			Card newCard = new Card(EuchreEnums.Suit.Clubs, 7, "7");
@@ -120,14 +120,23 @@ public partial class PlayerHand : Control
 	private void TestPositionEntered() {
 		for (int i = handPositions.Count - 1; i >= 0; i--) {
 			if (handPositions[i].HitTest()) {
-				if (lastEntered.GetPosInHand() != i) {
-					var card = handPositions[i].ClearCard();
-					lastEntered.AcceptNewCard(card);
-					// animate to new pos
-					Tween tween = GetTree().CreateTween();
-					tween.SetParallel();
-					tween.TweenProperty(card.GetModel(), "position", lastEntered.Position, 0.1);
-					tween.TweenProperty(card.GetModel(), "rotation", CalcCardRotationFromPosition(lastEntered.Position), 0.1);
+				var lastPos = lastEntered.GetPosInHand();
+				if (lastPos != i) {
+					var incr = lastPos < i ? 1 : -1;
+					HandPosition nextFilled = lastEntered;
+
+					for (int j = lastPos + incr; j != i + incr; j += incr) {
+						var card = handPositions[j].ClearCard();
+
+						nextFilled.AcceptNewCard(card);
+						// animate to new pos
+						Tween tween = GetTree().CreateTween();
+						tween.SetParallel();
+						tween.TweenProperty(card.GetModel(), "position", nextFilled.Position, 0.1);
+						tween.TweenProperty(card.GetModel(), "rotation", CalcCardRotationFromPosition(nextFilled.Position), 0.1);
+
+						if (j != i) { nextFilled = handPositions[j]; }
+					}
 
 					lastEntered = handPositions[i];
 					AlignCardIndexToHandPosition();
@@ -202,8 +211,10 @@ public partial class PlayerHand : Control
 
 	private void RefreshCardDrawOrder() {
 		for (int i = cardsInHand.Count - 1; i >= 0; i--) {
-			cardsInHand[i].GetModel().ZIndex = i + 2;
-			SetCardRotationInHandArea(cardsInHand[i]);
+			if (cardsInHand[i] != null && cardsInHand[i].GetModel() != null) {
+				cardsInHand[i].GetModel().ZIndex = i + 2;
+				SetCardRotationInHandArea(cardsInHand[i]);
+			}
 		}
 	}
 
