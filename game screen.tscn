@@ -1,10 +1,14 @@
-[gd_scene load_steps=4 format=3 uid="uid://cd366ms84a0gb"]
+[gd_scene load_steps=6 format=3 uid="uid://cd366ms84a0gb"]
 
 [ext_resource type="Script" path="res://PlayerHand.cs" id="1_nyu8a"]
 [ext_resource type="Texture2D" uid="uid://ba72wgy3ppee2" path="res://Images/feltTile.png" id="2_uoskm"]
+[ext_resource type="Script" path="res://PlayerDiscard.cs" id="3_e5x7u"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_h1opd"]
 size = Vector2(852, 365)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_8cyh5"]
+size = Vector2(498, 153.5)
 
 [node name="Game" type="Control"]
 layout_mode = 3
@@ -38,4 +42,20 @@ offset_bottom = 183.0
 texture = ExtResource("2_uoskm")
 stretch_mode = 1
 
+[node name="PlayerDiscard" type="Control" parent="."]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("3_e5x7u")
+
+[node name="DiscardBoundary" type="Area2D" parent="PlayerDiscard"]
+position = Vector2(932, 557)
+
+[node name="DiscardOutline" type="CollisionShape2D" parent="PlayerDiscard/DiscardBoundary"]
+shape = SubResource("RectangleShape2D_8cyh5")
+
 [connection signal="input_event" from="PlayerHand/PlayerHandBoundary" to="PlayerHand" method="HandleArea2DInput"]
+[connection signal="mouse_entered" from="PlayerHand/PlayerHandBoundary" to="PlayerHand" method="playerHandEntered"]
+[connection signal="mouse_exited" from="PlayerHand/PlayerHandBoundary" to="PlayerHand" method="playerHandExited"]
+[connection signal="mouse_entered" from="PlayerDiscard/DiscardBoundary" to="PlayerHand" method="playerDiscardEntered"]
+[connection signal="mouse_exited" from="PlayerDiscard/DiscardBoundary" to="PlayerHand" method="playerDiscardExited"]

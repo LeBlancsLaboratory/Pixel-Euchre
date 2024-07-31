@@ -7,7 +7,6 @@
 size = Vector2(110, 158)
 
 [node name="CardModel" type="Node2D"]
-visible = false
 position = Vector2(54, 80)
 script = ExtResource("1_a21xv")
 

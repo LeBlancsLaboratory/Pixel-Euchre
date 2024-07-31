@@ -7,10 +7,10 @@ using System.Collections.Generic;
 
 public partial class PlayerHand : Control
 {
-	private float upperBoundary;
+	private bool inPlayerHand = false;
+	private bool inPlayerDiscard = false;
 	private float leftBoundary;
 	private float rightBoundary;
-	private float lowerBoundary;
 	private float centerX;
 	private float centerY;
 	private static Vector2 defaultOffset = new Vector2(0, 0);
@@ -22,20 +22,20 @@ public partial class PlayerHand : Control
 	// collection of cards in the client player's hand.
 	// the index order of this also represents the draw order. drawn from left to right
 	private List<Card> cardsInHand = new List<Card>();
-
 	private List<HandPosition> handPositions = new List<HandPosition>();
+	private PlayerDiscard discard;
 
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready() {
 		CollisionShape2D handPhysBoundary = (CollisionShape2D)FindChild("PlayerHandBoundary").FindChild("HandOutline");
 		Vector2 hbPosition = handPhysBoundary.Shape.GetRect().Position;
 		Vector2 hbSize = handPhysBoundary.Shape.GetRect().Size;
-		upperBoundary = hbPosition.Y;
-		lowerBoundary = hbPosition.Y + hbSize.Y;
 		leftBoundary = hbPosition.X;
 		rightBoundary = hbPosition.X + hbSize.X;
 		centerX = hbPosition.X + (hbSize.X / 2);
 		centerY = hbPosition.Y + (hbSize.Y / 2);
+
+		discard = (PlayerDiscard)GetParent().FindChild("PlayerDiscard");
 
 		HandPosition templatePosition = (HandPosition)GD.Load<PackedScene>("res://hand_position.tscn").Instantiate(); // should get garbage collected?
 
@@ -103,11 +103,18 @@ public partial class PlayerHand : Control
 		return newRotation;
 	}
 
+	private bool IsPositionInPlayerHand(Vector2 pos) {
+		if (!inPlayerHand && !inPlayerDiscard) {
+			return false;
+		}
+		return true;
+	}
+
     // Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta) {
 		if (dragging && draggingCard != null) {
 			Vector2 newPosition = GetLocalMousePosition() + draggingCardOffset;
-			if (newPosition.X <= leftBoundary || newPosition.X >= rightBoundary || newPosition.Y <= upperBoundary || newPosition.Y >= lowerBoundary) {
+			if (!IsPositionInPlayerHand(newPosition)) {
 				StopDragging();
 			} else {
 				draggingCard.SetPosition(newPosition);
@@ -132,8 +139,8 @@ public partial class PlayerHand : Control
 						// animate to new pos
 						Tween tween = GetTree().CreateTween();
 						tween.SetParallel();
-						tween.TweenProperty(card.GetModel(), "position", nextFilled.Position, 0.1);
-						tween.TweenProperty(card.GetModel(), "rotation", CalcCardRotationFromPosition(nextFilled.Position), 0.1);
+						tween.TweenProperty(card.GetModel(), "position", nextFilled.Position, 0.2);
+						tween.TweenProperty(card.GetModel(), "rotation", CalcCardRotationFromPosition(nextFilled.Position), 0.2);
 
 						if (j != i) { nextFilled = handPositions[j]; }
 					}
@@ -218,5 +225,9 @@ public partial class PlayerHand : Control
 		}
 	}
 
+	private void playerHandEntered() { inPlayerHand = true; }
+	private void playerHandExited() { inPlayerHand = false; }
+	private void playerDiscardEntered() { inPlayerDiscard = true; }
+	private void playerDiscardExited() { inPlayerDiscard = false; }
 
 }
