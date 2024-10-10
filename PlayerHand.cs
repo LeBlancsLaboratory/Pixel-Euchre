@@ -7,13 +7,14 @@ using System.Collections.Generic;
 
 public partial class PlayerHand : Control
 {
+	private const double CARD_TWEEN_INTERVAL = 0.15;
 	private bool inPlayerHand = false;
 	private bool inPlayerDiscard = false;
 	private float leftBoundary;
 	private float rightBoundary;
 	private float centerX;
 	private float centerY;
-	private static Vector2 defaultOffset = new Vector2(0, 0);
+	private static Vector2 defaultOffset = new(0, 0);
 	private Card draggingCard;
 	private bool dragging = false;
 	private Vector2 draggingCardOffset;
@@ -21,8 +22,8 @@ public partial class PlayerHand : Control
 	private HandPosition startingPosition;
 	// collection of cards in the client player's hand.
 	// the index order of this also represents the draw order. drawn from left to right
-	private List<Card> cardsInHand = new List<Card>();
-	private List<HandPosition> handPositions = new List<HandPosition>();
+	private List<Card> cardsInHand = new();
+	private List<HandPosition> handPositions = new();
 	private PlayerDiscard discard;
 
 	// Called when the node enters the scene tree for the first time.
@@ -75,7 +76,7 @@ public partial class PlayerHand : Control
 
 			newCardModel.Visible = true;
 
-			Card newCard = new Card(EuchreEnums.Suit.Clubs, 7, "7");
+			Card newCard = new(EuchreEnums.Suit.Clubs, 7, "7");
 			newCard.SetModel(newCardModel);
 
 			cardsInHand.Add(newCard);
@@ -87,6 +88,17 @@ public partial class PlayerHand : Control
 
 		RefreshCardDrawOrder();
     }
+
+	public void AcceptCard(Card newCard) {
+		if (cardsInHand.Count < 5) {
+			if (newCard.GetModel() == null) {
+				CardModel newCardModel = (CardModel)GD.Load<PackedScene>("res://card_model.tscn").Instantiate();
+				newCard.SetModel(newCardModel);
+				// TODO: Some logic to set images on card model
+				newCardModel.Visible = true;
+			}
+		}
+	}
 
 	private void SetCardRotationInHandArea(Card card) {
 		card.SetRotationRad(CalcCardRotationFromPosition(card.GetModel().Position));
@@ -139,8 +151,18 @@ public partial class PlayerHand : Control
 						// animate to new pos
 						Tween tween = GetTree().CreateTween();
 						tween.SetParallel();
-						tween.TweenProperty(card.GetModel(), "position", nextFilled.Position, 0.2);
-						tween.TweenProperty(card.GetModel(), "rotation", CalcCardRotationFromPosition(nextFilled.Position), 0.2);
+						tween.TweenProperty(
+							card.GetModel(), 
+							"position", 
+							nextFilled.Position, 
+							CARD_TWEEN_INTERVAL
+						);
+						tween.TweenProperty(
+							card.GetModel(), 
+						    "rotation", 
+					        CalcCardRotationFromPosition(nextFilled.Position), 
+						    CARD_TWEEN_INTERVAL
+						);
 
 						if (j != i) { nextFilled = handPositions[j]; }
 					}
@@ -177,7 +199,7 @@ public partial class PlayerHand : Control
 		}
 	}
 
-	private void HandleArea2DInput(Node viewport, InputEvent inputEvent, long shapeIdx) {
+	private void HandleHandAreaInput(Node viewport, InputEvent inputEvent, long shapeIdx) {
 		if (inputEvent is InputEventMouseButton mouseEvent && mouseEvent.ButtonIndex == MouseButton.Left) {
 			if (inputEvent.IsPressed()) {
 				if (!dragging) {
@@ -189,25 +211,47 @@ public partial class PlayerHand : Control
 		}
 	}
 
+	private void HandleDiscardAreaInput(Node viewport, InputEvent inputEvent, long shapeIdx) {
+		if (inputEvent is InputEventMouseButton mouseEvent && mouseEvent.ButtonIndex == MouseButton.Left) {
+			if (!inputEvent.IsPressed() && draggingCard != null) {
+				StopDragging(true); // in the future this will be a discard function
+				RemakeHandPositionsFromCardIndex();
+			}
+		}
+	}
 
-	private void StopDragging() {
+	private void DiscardToGamePile(Card card) {
+		RemoveChild(card.GetModel());
+		cardsInHand.Remove(card);
+		discard.DiscardToGamePile(card);
+	}
+
+	private void StopDragging(bool discard = false) {
 		if (draggingCard != null) {
 			lastEntered.AcceptNewCard(draggingCard);
 			lastEntered.SetOccupantPosition();
 			lastEntered = null;
 			startingPosition = null;
 			dragging = false;
+
+			if (discard) {
+				DiscardToGamePile(draggingCard);
+			}
+
 			draggingCard = null;
 			draggingCardOffset = defaultOffset;
-			// TODO: test snap or return to original position
 
 			AlignCardIndexToHandPosition();
 			RefreshCardDrawOrder();
 		}
 	}
 
+	private void RemakeHandPositionsFromCardIndex() {
+		
+	}
+
 	private void AlignCardIndexToHandPosition() {
-		cardsInHand = new List<Card>(); // shouldn't be expensive.
+		cardsInHand = new(); // shouldn't be expensive.
 		foreach (HandPosition pos in handPositions) {
 			cardsInHand.Add(pos.GetCard());
 		}

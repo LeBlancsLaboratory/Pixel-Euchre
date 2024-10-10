@@ -1,3 +1,4 @@
+using EuchreObjects;
 using Godot;
 using System;
 
@@ -15,7 +16,7 @@ public partial class PlayerDiscard : Control
 	{
 	}
 
-	public void DiscardToGamePile() {
-		// add to gameboard
+	public void DiscardToGamePile(Card card) {
+		// add to game pile
 	}
 }

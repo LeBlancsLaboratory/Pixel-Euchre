@@ -54,8 +54,9 @@ position = Vector2(932, 557)
 [node name="DiscardOutline" type="CollisionShape2D" parent="PlayerDiscard/DiscardBoundary"]
 shape = SubResource("RectangleShape2D_8cyh5")
 
-[connection signal="input_event" from="PlayerHand/PlayerHandBoundary" to="PlayerHand" method="HandleArea2DInput"]
+[connection signal="input_event" from="PlayerHand/PlayerHandBoundary" to="PlayerHand" method="HandleHandAreaInput"]
 [connection signal="mouse_entered" from="PlayerHand/PlayerHandBoundary" to="PlayerHand" method="playerHandEntered"]
 [connection signal="mouse_exited" from="PlayerHand/PlayerHandBoundary" to="PlayerHand" method="playerHandExited"]
+[connection signal="input_event" from="PlayerDiscard/DiscardBoundary" to="PlayerHand" method="HandleDiscardAreaInput"]
 [connection signal="mouse_entered" from="PlayerDiscard/DiscardBoundary" to="PlayerHand" method="playerDiscardEntered"]
 [connection signal="mouse_exited" from="PlayerDiscard/DiscardBoundary" to="PlayerHand" method="playerDiscardExited"]
