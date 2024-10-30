@@ -42,7 +42,6 @@ public partial class HandPosition : Node2D
 
 	public Card ClearCard() {
 		Card oldCard = occupyingCard;
-		oldCard.SetCurrentHandPos(new HandPosition());
 		occupyingCard = null;
 		return oldCard; // COULD BE NULL
 	}

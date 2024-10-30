@@ -21,13 +21,13 @@ public partial class PlayerHand : Control
 	private Vector2 draggingCardOffset;
 	private HandPosition lastEntered;
 	private HandPosition startingPosition;
+
+	private HandPosition negativePosition;
 	// collection of cards in the client player's hand.
 	// the index order of this also represents the draw order. drawn from left to right
 	private List<Card> cardsInHand = new();
 	private List<HandPosition> handPositions = new();
 	private PlayerDiscard discard;
-
-	private HandPosition templatePosition;
 
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready() {
@@ -41,39 +41,6 @@ public partial class PlayerHand : Control
 
 		discard = (PlayerDiscard)GetParent().FindChild("PlayerDiscard");
 
-		templatePosition = (HandPosition)GD.Load<PackedScene>("res://hand_position.tscn").Instantiate(); // should get garbage collected?
-
-		float halfPosWidth = ((CollisionShape2D)templatePosition.FindChild("Area2D").FindChild("CollisionShape2D")).Shape.GetRect().Size.X / 2; // yuck
-		float fifteenthPosHeight = ((CollisionShape2D)templatePosition.FindChild("Area2D").FindChild("CollisionShape2D")).Shape.GetRect().Size.Y / 15; // yuck still
-
-		float newHandPositionPosX = halfPosWidth * -2;
-
-
-		// this section makes sense for instantiation. cards dont except for testing
-		PackedScene handPosScene = GD.Load<PackedScene>("res://hand_position.tscn");
-		for (int i = 0; i < 5; i++) {
-			HandPosition newHandPos = (HandPosition)handPosScene.Instantiate();
-			newHandPos.SetPosInHand(i);
-			AddChild(newHandPos);
-
-			float newY = centerY;
-			switch (Math.Abs(i - 2)) {
-				case 1:
-					newY = centerY + fifteenthPosHeight / 2;
-					break;
-				case 2:
-					newY = (float)(centerY + fifteenthPosHeight * 1.5); // i mean this is fully arbitrary... how will it look scaled?
-					break;
-			}
-
-			newHandPos.Position = new Vector2(newHandPositionPosX, newY);
-			newHandPositionPosX += halfPosWidth;
-
-			newHandPos.Rotation = CalcCardRotationFromPosition(newHandPos.Position);
-
-			handPositions.Add(newHandPos);
-		}
-
 		for (int i = 0; i < 5; i++) {
 			CardModel newCardModel = (CardModel)GD.Load<PackedScene>("res://card_model.tscn").Instantiate();
 			AddChild(newCardModel);
@@ -85,10 +52,10 @@ public partial class PlayerHand : Control
 
 			cardsInHand.Add(newCard);
 
-			handPositions[i].AcceptNewCard(newCard);
-			handPositions[i].SetOccupantPosition(); // call this manually now
 			SetCardRotationInHandArea(newCard);
 		}
+
+		RemakeHandPositionsFromCardIndex();
 
 		RefreshCardDrawOrder();
     }
@@ -225,9 +192,22 @@ public partial class PlayerHand : Control
 	}
 
 	private void DiscardToGamePile(Card card) {
-		RemoveChild(card.GetModel());
-		cardsInHand.Remove(card);
-		discard.DiscardToGamePile(card);
+		if (card.GetCurrentHandPos() != null && card.GetCurrentHandPos().GetPosInHand() != -1) {
+			card.SetCurrentHandPos(negativePosition);
+
+			AlignCardIndexToHandPosition();
+
+			GetViewport().SetInputAsHandled();
+			RemoveChild(card.GetModel());
+
+			cardsInHand.Remove(card);
+
+			discard.DiscardToGamePile(card);
+
+			RemakeHandPositionsFromCardIndex();
+			RefreshCardDrawOrder();
+
+		}
 	}
 
 	/// <summary>
@@ -260,67 +240,113 @@ public partial class PlayerHand : Control
 	/// </summary>
 	private void RemakeHandPositionsFromCardIndex() {
 
-		// foreach(HandPosition pos in handPositions) {
-		// 	RemoveChild(pos);
-		// }
-		// handPositions = new(); // reset hand positions ... could be done with what we've got, clear positions, reassign ?? add when needed ??
+		// THIS VERY MUCH KIND-OF WORKS - pls fix @rumlerjo :)
 
-		// // load the hand scene
-		// PackedScene handPosScene = GD.Load<PackedScene>("res://hand_position.tscn");
+		// load the hand pos scene
+		PackedScene handPosScene = GD.Load<PackedScene>("res://hand_position.tscn");
 
-		// // calculate arbitrary values to place cards with arbitrarily
-		// float halfPosWidth = ((CollisionShape2D)templatePosition.FindChild("Area2D").FindChild("CollisionShape2D")).Shape.GetRect().Size.X / 2;
-		// float fifteenthPosHeight = ((CollisionShape2D)templatePosition.FindChild("Area2D").FindChild("CollisionShape2D")).Shape.GetRect().Size.Y / 15;
+		if (negativePosition == null) {
+			negativePosition = (HandPosition)handPosScene.Instantiate();
+		}
+		
+		// the number of elements in handPositions we need to modify (add/sub)
+		// int toModify = cardsInHand.Count - handPositions.Count;
 
-		// switch (cardsInHand.Count) {
-		//  case 1:
-		//		break;
-		//	case 2:
-		//		break;
-		// 	case 3:
-		// 		int offsetXMultiplier = -1;
-		// 		for (int i = 0; i < 3; i++) {
-		// 			float newPosX = centerX + (halfPosWidth * offsetXMultiplier);
-		// 			float newPosY = centerY + (fifteenthPosHeight * offsetXMultiplier);
+		handPositions = new();
+
+		for (int i = 0; i < cardsInHand.Count; i++) {
+			HandPosition newHandPos = (HandPosition)handPosScene.Instantiate();
+			handPositions.Add(newHandPos);
+			AddChild(newHandPos);
+			newHandPos.SetPosInHand(i);
+			newHandPos.AcceptNewCard(cardsInHand[i]);
+		}
+
+		// calculate arbitrary values to place cards with arbitrarily
+		float halfPosWidth = ((CollisionShape2D)negativePosition.FindChild("Area2D").FindChild("CollisionShape2D")).Shape.GetRect().Size.X / 2;
+		float fifteenthPosHeight = ((CollisionShape2D)negativePosition.FindChild("Area2D").FindChild("CollisionShape2D")).Shape.GetRect().Size.Y / 15;
+
+		// if you notice a pattern and can refactor please do im just fucking with hardcoded values so it renders in a way i like
+		HandPosition currHandPos;
+		switch (cardsInHand.Count) {
+		    case 1:
+				currHandPos = handPositions[0];
+				currHandPos.Position = new Vector2(centerX, centerY);
+				currHandPos.SetOccupantPosition();
+				break;
+			case 2:
+				int xMult = -1;
+				for (int i = 0; i < 2; i++) {
+					float newPosX = centerX + (halfPosWidth / 2 * xMult);
+					float newPosY = centerY + (fifteenthPosHeight * -1);
 					
-		// 			HandPosition newHandPos = (HandPosition)handPosScene.Instantiate();
-		// 			newHandPos.Position = new Vector2(newPosX, newPosY);
-		// 			newHandPos.Rotation = CalcCardRotationFromPosition(newHandPos.Position);
+					currHandPos = handPositions[i];
+					currHandPos.Position = new Vector2(newPosX, newPosY);
+					currHandPos.Rotation = CalcCardRotationFromPosition(currHandPos.Position);
 
-		// 			newHandPos.AcceptNewCard(cardsInHand[i]);
-		// 			newHandPos.SetOccupantPosition();
-		// 		}
-		// 		break;
-		// 	case 4:
-				
-		// 		break;
-		// 	case 5:
-		// 		break;
-		// }
+					currHandPos.SetOccupantPosition();
 
-		// the below is for reference when building this function
-		// for (int i = 0; i < 5; i++) {
-		// 	HandPosition newHandPos = (HandPosition)GD.Load<PackedScene>("res://hand_position.tscn").Instantiate();
-		// 	newHandPos.SetPosInHand(i);
-		// 	AddChild(newHandPos);
+					xMult += 2;
+				}
+				break;
+			case 3:
+				int offsetMultiplier = -1;
+				for (int i = 0; i < 3; i++) {
+					float newPosX = centerX + (halfPosWidth * offsetMultiplier);
+					float newPosY = centerY + (fifteenthPosHeight * offsetMultiplier);
+					
+					currHandPos = handPositions[i];
+					currHandPos.Position = new Vector2(newPosX, newPosY);
+					currHandPos.Rotation = CalcCardRotationFromPosition(currHandPos.Position);
 
-		// 	float newY = centerY;
-		// 	switch (Math.Abs(i - 2)) {
-		// 		case 1:
-		// 			newY = centerY + fifteenthPosHeight / 2;
-		// 			break;
-		// 		case 2:
-		// 			newY = (float)(centerY + fifteenthPosHeight * 1.5); // i mean this is fully arbitrary... how will it look scaled?
-		// 			break;
-		// 	}
+					currHandPos.SetOccupantPosition();
 
-		// 	newHandPos.Position = new Vector2(newHandPositionPosX, newY);
-		// 	newHandPositionPosX += halfPosWidth;
+					offsetMultiplier++;
+				}
+				break;
+			case 4:
+				float newHandPositionPosX1 = -halfPosWidth;
+				int yMult = -1;
+				for (int i = 0; i < 5; i++) {
+					float newY = centerY + (fifteenthPosHeight * Math.Abs(yMult));
+					currHandPos = handPositions[i];
 
-		// 	newHandPos.Rotation = CalcCardRotationFromPosition(newHandPos.Position);
+					currHandPos.Position = new Vector2(newHandPositionPosX1, newY);
+					newHandPositionPosX1 += halfPosWidth;
 
-		// 	handPositions.Add(newHandPos);
-		// }
+					currHandPos.Rotation = CalcCardRotationFromPosition(currHandPos.Position);
+
+					currHandPos.SetOccupantPosition();
+
+					newHandPositionPosX1 += halfPosWidth / 2;
+
+					yMult++;
+				}
+				break;
+			case 5:
+				float newHandPositionPosX2 = halfPosWidth * -2;
+				for (int i = 0; i < 5; i++) {
+					currHandPos = handPositions[i];
+
+					float newY = centerY;
+					switch (Math.Abs(i - 2)) {
+						case 1:
+							newY = centerY + fifteenthPosHeight / 2;
+							break;
+						case 2:
+							newY = (float)(centerY + fifteenthPosHeight * 1.5);
+							break;
+					}
+
+					currHandPos.Position = new Vector2(newHandPositionPosX2, newY);
+					currHandPos.Rotation = CalcCardRotationFromPosition(currHandPos.Position);
+
+					currHandPos.SetOccupantPosition();
+
+					newHandPositionPosX2 += halfPosWidth;
+				}
+				break;
+		}	
 	}
 
 	private void AlignCardIndexToHandPosition() {

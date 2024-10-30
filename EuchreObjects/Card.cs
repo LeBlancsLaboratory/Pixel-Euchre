@@ -72,7 +72,10 @@ public class Card
 	}
 
 	public bool HitTest() {
-		return cardModel.HitTest();
+		if (cardModel != null) {
+			return cardModel.HitTest();
+		}
+		return false;
 	}
 
 	public Vector2? GetPosition() {
