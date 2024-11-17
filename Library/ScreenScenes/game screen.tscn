@@ -19,6 +19,16 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
+[node name="GameBoard" type="Control" parent="."]
+anchors_preset = 0
+offset_right = 1920.0
+offset_bottom = 1080.0
+
+[node name="GameTableTexture" type="TextureRect" parent="GameBoard"]
+layout_mode = 0
+offset_right = 1920.0
+offset_bottom = 1080.0
+
 [node name="PlayerHand" type="Control" parent="."]
 anchors_preset = 0
 offset_left = 932.0

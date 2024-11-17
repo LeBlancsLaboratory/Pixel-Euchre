@@ -418,7 +418,7 @@ public partial class PlayerHand : Control
 				break;
 		}
 
-		TweenCardToNewPosition(cardsInHand, handPositions, .15 / cardsInHand.Count, true);
+		TweenCardToNewPosition(cardsInHand, handPositions, wait: false);
 	}
 
 	private void AlignCardIndexToHandPosition() {
