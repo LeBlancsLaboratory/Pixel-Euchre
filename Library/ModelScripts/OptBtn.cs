@@ -7,6 +7,6 @@ public partial class OptBtn : Button
     {
         base._Pressed();
 
-		GetTree().ChangeSceneToFile("res://options.tscn");
+		GetTree().ChangeSceneToFile("res://Library/ScreenScenes/options.tscn");
     }
 }

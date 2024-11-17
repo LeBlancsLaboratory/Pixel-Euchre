@@ -7,6 +7,6 @@ public partial class PlayBtn : Button
     {
         base._Pressed();
 
-        GetTree().ChangeSceneToFile("res://game screen.tscn");
+        GetTree().ChangeSceneToFile("res://Library/ScreenScenes/game screen.tscn");
     }
 }

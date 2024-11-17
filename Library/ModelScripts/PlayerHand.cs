@@ -42,7 +42,7 @@ public partial class PlayerHand : Control
 		discard = (PlayerDiscard)GetParent().FindChild("PlayerDiscard");
 
 		for (int i = 0; i < 5; i++) {
-			CardModel newCardModel = (CardModel)GD.Load<PackedScene>("res://card_model.tscn").Instantiate();
+			CardModel newCardModel = (CardModel)GD.Load<PackedScene>("res://Library/ModelScenes/card_model.tscn").Instantiate();
 			AddChild(newCardModel);
 
 			newCardModel.Visible = true;
@@ -63,7 +63,7 @@ public partial class PlayerHand : Control
 	public void AcceptCard(Card newCard) {
 		if (cardsInHand.Count < 5) {
 			if (newCard.GetModel() == null) {
-				CardModel newCardModel = (CardModel)GD.Load<PackedScene>("res://card_model.tscn").Instantiate();
+				CardModel newCardModel = (CardModel)GD.Load<PackedScene>("res://Library/ModelScenes/card_model.tscn").Instantiate();
 				newCard.SetModel(newCardModel);
 				// TODO: Some logic to set images on card model
 				newCardModel.Visible = true;
@@ -107,6 +107,62 @@ public partial class PlayerHand : Control
 		}
 	}
 
+	/// <summary>
+	/// Tweens a card to a new position and calculated rotation.
+	/// </summary>
+	/// <param name="card">Card to tween</param>
+	/// <param name="position">Position to tween to</param>
+	/// <param name="interval">Interval at which card tweens in seconds</param>
+	/// <param name="parallel">Bool representing whether rotation and position should tween simultaneously
+	private void TweenCardToNewPosition(Card card, Vector2 position, double interval=-1, bool parallel=true) {
+		if (interval < 0) {interval = CARD_TWEEN_INTERVAL;}
+		Tween tween = GetTree().CreateTween();
+		if (parallel) {
+			tween.SetParallel();
+		}
+		tween.TweenProperty(
+			card.GetModel(), 
+			"position", 
+			position, 
+			interval
+		);
+		tween.TweenProperty(
+			card.GetModel(), 
+			"rotation", 
+			CalcCardRotationFromPosition(position), 
+			interval
+		);
+	}
+
+	/// <summary>
+	/// Tweens a list of cards to a new position and calculated rotation.
+	/// </summary>
+	/// <param name="cards">Cards to tween</param>
+	/// <param name="positions">Positions to tween cards to</param>
+	/// <param name="interval">Interval at which cards tween in seconds</param>
+	/// <param name="parallel">Bool representing whether rotation and position should tween simultaneously
+	private void TweenCardToNewPosition(List<Card> cards, List<HandPosition> positions, double interval=-1, bool parallel=true) {
+		if (interval < 0) {interval = CARD_TWEEN_INTERVAL;}
+		for (int i = 0; i < cards.Count; i++) {
+			Tween tween = GetTree().CreateTween();
+			if (parallel) {
+				tween.SetParallel();
+			}
+			tween.TweenProperty(
+				cards[i].GetModel(), 
+				"position", 
+				positions[i].Position, 
+				interval
+			);
+			tween.TweenProperty(
+				cards[i].GetModel(), 
+				"rotation", 
+				CalcCardRotationFromPosition(positions[i].Position), 
+				interval
+			);
+		}
+	}
+
 	private void TestPositionEntered() {
 		for (int i = handPositions.Count - 1; i >= 0; i--) {
 			if (handPositions[i].HitTest()) {
@@ -120,20 +176,7 @@ public partial class PlayerHand : Control
 
 						nextFilled.AcceptNewCard(card);
 						// animate to new pos
-						Tween tween = GetTree().CreateTween();
-						tween.SetParallel();
-						tween.TweenProperty(
-							card.GetModel(), 
-							"position", 
-							nextFilled.Position, 
-							CARD_TWEEN_INTERVAL
-						);
-						tween.TweenProperty(
-							card.GetModel(), 
-						    "rotation", 
-					        CalcCardRotationFromPosition(nextFilled.Position), 
-						    CARD_TWEEN_INTERVAL
-						);
+						TweenCardToNewPosition(card, nextFilled.Position);
 
 						if (j != i) { nextFilled = handPositions[j]; }
 					}
@@ -206,7 +249,6 @@ public partial class PlayerHand : Control
 
 			RemakeHandPositionsFromCardIndex();
 			RefreshCardDrawOrder();
-
 		}
 	}
 
@@ -239,19 +281,15 @@ public partial class PlayerHand : Control
 	/// Align cards in hand to new objects.
 	/// </summary>
 	private void RemakeHandPositionsFromCardIndex() {
-
-		// THIS VERY MUCH KIND-OF WORKS - pls fix @rumlerjo :)
-
 		// load the hand pos scene
-		PackedScene handPosScene = GD.Load<PackedScene>("res://hand_position.tscn");
+		PackedScene handPosScene = GD.Load<PackedScene>("res://Library/ModelScenes/hand_position.tscn");
 
 		if (negativePosition == null) {
 			negativePosition = (HandPosition)handPosScene.Instantiate();
 		}
-		
-		// the number of elements in handPositions we need to modify (add/sub)
-		// int toModify = cardsInHand.Count - handPositions.Count;
 
+
+		// maybe find a more efficient way to do this
 		handPositions = new();
 
 		for (int i = 0; i < cardsInHand.Count; i++) {
@@ -272,19 +310,21 @@ public partial class PlayerHand : Control
 		    case 1:
 				currHandPos = handPositions[0];
 				currHandPos.Position = new Vector2(centerX, centerY);
+
 				currHandPos.SetOccupantPosition();
 				break;
 			case 2:
 				int xMult = -1;
 				for (int i = 0; i < 2; i++) {
 					float newPosX = centerX + (halfPosWidth / 2 * xMult);
-					float newPosY = centerY + (fifteenthPosHeight * -1);
+					float newPosY = centerY;
+					
+					Vector2 newPos = new Vector2(newPosX, newPosY);
 					
 					currHandPos = handPositions[i];
-					currHandPos.Position = new Vector2(newPosX, newPosY);
-					currHandPos.Rotation = CalcCardRotationFromPosition(currHandPos.Position);
 
-					currHandPos.SetOccupantPosition();
+					currHandPos.Position = newPos;
+					currHandPos.Rotation = CalcCardRotationFromPosition(currHandPos.Position);
 
 					xMult += 2;
 				}
@@ -293,34 +333,39 @@ public partial class PlayerHand : Control
 				int offsetMultiplier = -1;
 				for (int i = 0; i < 3; i++) {
 					float newPosX = centerX + (halfPosWidth * offsetMultiplier);
-					float newPosY = centerY + (fifteenthPosHeight * offsetMultiplier);
 					
-					currHandPos = handPositions[i];
-					currHandPos.Position = new Vector2(newPosX, newPosY);
-					currHandPos.Rotation = CalcCardRotationFromPosition(currHandPos.Position);
+					float newPosY = centerY;
+					if (i == 0 || i == 2) {
+						newPosY += (float)(fifteenthPosHeight / 1.5);
+					}
 
-					currHandPos.SetOccupantPosition();
+					Vector2 newPos = new Vector2(newPosX, newPosY);
+
+					currHandPos = handPositions[i];
+					currHandPos.Position = newPos;
+					currHandPos.Rotation = CalcCardRotationFromPosition(currHandPos.Position);
 
 					offsetMultiplier++;
 				}
 				break;
 			case 4:
-				float newHandPositionPosX1 = -halfPosWidth;
-				int yMult = -1;
-				for (int i = 0; i < 5; i++) {
-					float newY = centerY + (fifteenthPosHeight * Math.Abs(yMult));
+				float case4XLeftBound = (float)(halfPosWidth * -1.5);
+				float case4XRightBound = (float)(halfPosWidth * 1.5);
+				List<float> case4XPositions = new List<float>{case4XLeftBound, case4XLeftBound + halfPosWidth, case4XLeftBound + halfPosWidth * 2, case4XRightBound};
+				for (int i = 0; i < 4; i++) {
 					currHandPos = handPositions[i];
 
-					currHandPos.Position = new Vector2(newHandPositionPosX1, newY);
-					newHandPositionPosX1 += halfPosWidth;
+					float newY = centerY;
 
+					if (i == 0 || i == 3) {
+						newY += (float)(fifteenthPosHeight / 1.5);
+					}
+
+					Vector2 newPos = new Vector2(case4XPositions[i], newY);
+
+					currHandPos.Position = newPos;
 					currHandPos.Rotation = CalcCardRotationFromPosition(currHandPos.Position);
 
-					currHandPos.SetOccupantPosition();
-
-					newHandPositionPosX1 += halfPosWidth / 2;
-
-					yMult++;
 				}
 				break;
 			case 5:
@@ -331,22 +376,24 @@ public partial class PlayerHand : Control
 					float newY = centerY;
 					switch (Math.Abs(i - 2)) {
 						case 1:
-							newY = centerY + fifteenthPosHeight / 2;
+							newY = (float)(centerY + fifteenthPosHeight / 3);
 							break;
 						case 2:
-							newY = (float)(centerY + fifteenthPosHeight * 1.5);
+							newY = (float)(centerY + fifteenthPosHeight * 1.25);
 							break;
 					}
 
-					currHandPos.Position = new Vector2(newHandPositionPosX2, newY);
-					currHandPos.Rotation = CalcCardRotationFromPosition(currHandPos.Position);
+					Vector2 newPos = new Vector2(newHandPositionPosX2, newY);
 
-					currHandPos.SetOccupantPosition();
+					currHandPos.Position = newPos;
+					currHandPos.Rotation = CalcCardRotationFromPosition(currHandPos.Position);
 
 					newHandPositionPosX2 += halfPosWidth;
 				}
 				break;
-		}	
+		}
+
+		TweenCardToNewPosition(cardsInHand, handPositions);
 	}
 
 	private void AlignCardIndexToHandPosition() {
