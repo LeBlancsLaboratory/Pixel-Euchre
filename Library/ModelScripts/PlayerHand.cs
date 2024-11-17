@@ -1,7 +1,6 @@
 using EuchreObjects;
 using Godot;
 using System;
-using System.Collections;
 
 using System.Collections.Generic;
 
@@ -41,26 +40,22 @@ public partial class PlayerHand : Control
 
 		discard = (PlayerDiscard)GetParent().FindChild("PlayerDiscard");
 
+		List<Card> cardsForTesting = new();
+
 		for (int i = 0; i < 5; i++) {
 			CardModel newCardModel = (CardModel)GD.Load<PackedScene>("res://Library/ModelScenes/card_model.tscn").Instantiate();
-			AddChild(newCardModel);
-
 			newCardModel.Visible = true;
 
 			Card newCard = new(EuchreEnums.Suit.Clubs, 7, "7");
 			newCard.SetModel(newCardModel);
 
-			cardsInHand.Add(newCard);
-
-			SetCardRotationInHandArea(newCard);
+			cardsForTesting.Add(newCard);
 		}
 
-		RemakeHandPositionsFromCardIndex();
-
-		RefreshCardDrawOrder();
+		AcceptCard(cardsForTesting);
     }
 
-	public void AcceptCard(Card newCard) {
+	public bool AcceptCard(Card newCard) {
 		if (cardsInHand.Count < 5) {
 			if (newCard.GetModel() == null) {
 				CardModel newCardModel = (CardModel)GD.Load<PackedScene>("res://Library/ModelScenes/card_model.tscn").Instantiate();
@@ -68,7 +63,33 @@ public partial class PlayerHand : Control
 				// TODO: Some logic to set images on card model
 				newCardModel.Visible = true;
 			}
+
+			cardsInHand.Add(newCard);
+			AddChild(newCard.GetModel());
+			RemakeHandPositionsFromCardIndex();
+			RefreshCardDrawOrder();
 		}
+		return cardsInHand.Count < 5;
+	}
+
+	// always use this for adding multiple, tweening gets funky otherwise due to remaking hand pos every iter
+	public bool AcceptCard(List<Card> newCards) {
+		if (cardsInHand.Count + newCards.Count <= 5) {
+			foreach (Card card in newCards) {
+				if (card.GetModel() == null) {
+					CardModel newCardModel = (CardModel)GD.Load<PackedScene>("res://Library/ModelScenes/card_model.tscn").Instantiate();
+					card.SetModel(newCardModel);
+					// TODO: Some logic to set images on card model
+					newCardModel.Visible = true;					
+				}
+				cardsInHand.Add(card);
+				AddChild(card.GetModel());
+			}
+
+			RemakeHandPositionsFromCardIndex();
+			RefreshCardDrawOrder();
+		}
+		return cardsInHand.Count + newCards.Count <= 5;
 	}
 
 	private void SetCardRotationInHandArea(Card card) {
@@ -113,13 +134,11 @@ public partial class PlayerHand : Control
 	/// <param name="card">Card to tween</param>
 	/// <param name="position">Position to tween to</param>
 	/// <param name="interval">Interval at which card tweens in seconds</param>
-	/// <param name="parallel">Bool representing whether rotation and position should tween simultaneously
-	private void TweenCardToNewPosition(Card card, Vector2 position, double interval=-1, bool parallel=true) {
+	/// <param name="parallel">Bool representing whether tweener will await tween to finish
+	private async void TweenCardToNewPosition(Card card, Vector2 position, double interval=-1, bool wait=false) {
 		if (interval < 0) {interval = CARD_TWEEN_INTERVAL;}
 		Tween tween = GetTree().CreateTween();
-		if (parallel) {
-			tween.SetParallel();
-		}
+		tween.SetParallel();
 		tween.TweenProperty(
 			card.GetModel(), 
 			"position", 
@@ -132,6 +151,9 @@ public partial class PlayerHand : Control
 			CalcCardRotationFromPosition(position), 
 			interval
 		);
+		if (wait) {
+			await ToSignal(tween, Tween.SignalName.Finished);
+		}
 	}
 
 	/// <summary>
@@ -140,14 +162,12 @@ public partial class PlayerHand : Control
 	/// <param name="cards">Cards to tween</param>
 	/// <param name="positions">Positions to tween cards to</param>
 	/// <param name="interval">Interval at which cards tween in seconds</param>
-	/// <param name="parallel">Bool representing whether rotation and position should tween simultaneously
-	private void TweenCardToNewPosition(List<Card> cards, List<HandPosition> positions, double interval=-1, bool parallel=true) {
+	/// <param name="wait">Bool representing whether tweener will await tweens to finish
+	private async void TweenCardToNewPosition(List<Card> cards, List<HandPosition> positions, double interval=-1, bool wait=false) {
 		if (interval < 0) {interval = CARD_TWEEN_INTERVAL;}
 		for (int i = 0; i < cards.Count; i++) {
 			Tween tween = GetTree().CreateTween();
-			if (parallel) {
-				tween.SetParallel();
-			}
+			tween.SetParallel();
 			tween.TweenProperty(
 				cards[i].GetModel(), 
 				"position", 
@@ -160,6 +180,9 @@ public partial class PlayerHand : Control
 				CalcCardRotationFromPosition(positions[i].Position), 
 				interval
 			);
+			if (wait) {
+				await ToSignal(tween, Tween.SignalName.Finished);
+			}
 		}
 	}
 
@@ -336,7 +359,7 @@ public partial class PlayerHand : Control
 					
 					float newPosY = centerY;
 					if (i == 0 || i == 2) {
-						newPosY += (float)(fifteenthPosHeight / 1.5);
+						newPosY += (float)(fifteenthPosHeight / 3);
 					}
 
 					Vector2 newPos = new Vector2(newPosX, newPosY);
@@ -351,7 +374,8 @@ public partial class PlayerHand : Control
 			case 4:
 				float case4XLeftBound = (float)(halfPosWidth * -1.5);
 				float case4XRightBound = (float)(halfPosWidth * 1.5);
-				List<float> case4XPositions = new List<float>{case4XLeftBound, case4XLeftBound + halfPosWidth, case4XLeftBound + halfPosWidth * 2, case4XRightBound};
+				
+				float case4XPos = (float)(halfPosWidth * -1.5);
 				for (int i = 0; i < 4; i++) {
 					currHandPos = handPositions[i];
 
@@ -361,11 +385,12 @@ public partial class PlayerHand : Control
 						newY += (float)(fifteenthPosHeight / 1.5);
 					}
 
-					Vector2 newPos = new Vector2(case4XPositions[i], newY);
+					Vector2 newPos = new Vector2(case4XPos, newY);
 
 					currHandPos.Position = newPos;
 					currHandPos.Rotation = CalcCardRotationFromPosition(currHandPos.Position);
 
+					case4XPos += halfPosWidth;
 				}
 				break;
 			case 5:
@@ -393,7 +418,7 @@ public partial class PlayerHand : Control
 				break;
 		}
 
-		TweenCardToNewPosition(cardsInHand, handPositions);
+		TweenCardToNewPosition(cardsInHand, handPositions, .15 / cardsInHand.Count, true);
 	}
 
 	private void AlignCardIndexToHandPosition() {
