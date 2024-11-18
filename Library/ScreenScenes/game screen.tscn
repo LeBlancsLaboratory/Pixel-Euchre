@@ -41,7 +41,7 @@ script = ExtResource("1_xu4jg")
 
 [node name="PlayerHandBoundary" type="Area2D" parent="PlayerHand"]
 position = Vector2(0, 2)
-scale = Vector2(1, 0.760002)
+scale = Vector2(0.71931, 0.760002)
 
 [node name="HandOutline" type="CollisionShape2D" parent="PlayerHand/PlayerHandBoundary"]
 shape = SubResource("RectangleShape2D_h1opd")

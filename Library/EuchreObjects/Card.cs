@@ -43,7 +43,7 @@ public class Card
 	/// </summary>
 	/// <param name="other"></param>
 	/// <returns>True if both rank and suit are equal</returns>
-	public bool fullyEquals(Card other) {
+	public bool FullyEquals(Card other) {
 		return this.suit == other.suit && this.rank == other.rank;
 	}
 

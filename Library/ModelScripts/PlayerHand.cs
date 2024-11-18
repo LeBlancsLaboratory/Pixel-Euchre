@@ -4,10 +4,15 @@ using System;
 
 using System.Collections.Generic;
 
+// this script is something else man
 
 public partial class PlayerHand : Control
 {
 	private const double CARD_TWEEN_INTERVAL = 0.15;
+	/// <summary>
+	/// 
+	/// </summary>
+	private bool discardActive = false;
 	private bool inPlayerHand = false;
 	private bool inPlayerDiscard = false;
 	private float leftBoundary;
@@ -27,6 +32,14 @@ public partial class PlayerHand : Control
 	private List<Card> cardsInHand = new();
 	private List<HandPosition> handPositions = new();
 	private PlayerDiscard discard;
+
+	public void StartTurn() {
+		discardActive = true;
+	}
+
+	public void EndTurn() {
+		discardActive = false;
+	}
 
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready() {
@@ -53,6 +66,8 @@ public partial class PlayerHand : Control
 		}
 
 		AcceptCard(cardsForTesting);
+
+		StartTurn();
     }
 
 	public bool AcceptCard(Card newCard) {
@@ -259,6 +274,9 @@ public partial class PlayerHand : Control
 
 	private void DiscardToGamePile(Card card) {
 		if (card.GetCurrentHandPos() != null && card.GetCurrentHandPos().GetPosInHand() != -1) {
+			// in euchre the turn would end after a single discard
+			//EndTurn();
+
 			card.SetCurrentHandPos(negativePosition);
 
 			AlignCardIndexToHandPosition();
@@ -302,6 +320,7 @@ public partial class PlayerHand : Control
 	/// <summary>
 	/// Remake the position objects according to the size of the hand after a card is added or discarded.
 	/// Align cards in hand to new objects.
+	/// Animate cards to new hand positions.
 	/// </summary>
 	private void RemakeHandPositionsFromCardIndex() {
 		// load the hand pos scene
@@ -442,7 +461,6 @@ public partial class PlayerHand : Control
 
 	private void playerHandEntered() { inPlayerHand = true; }
 	private void playerHandExited() { inPlayerHand = false; }
-	private void playerDiscardEntered() { inPlayerDiscard = true; }
+	private void playerDiscardEntered() { inPlayerDiscard = true && discardActive; }
 	private void playerDiscardExited() { inPlayerDiscard = false; }
-
 }
