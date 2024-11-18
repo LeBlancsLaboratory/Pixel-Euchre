@@ -330,16 +330,26 @@ public partial class PlayerHand : Control
 			negativePosition = (HandPosition)handPosScene.Instantiate();
 		}
 
+		// reset handpositions in place.
+		// STEP 1: align count of handpositions with that of cards
+		// STEP 2: update card references on handpositions and vice versa (acceptnewcard handles this)
+		// O(n) (thank you sebnem) (doesn't matter because we're max of 5 object references)
+		int increment = handPositions.Count < cardsInHand.Count ? 1 : -1;
 
-		// maybe find a more efficient way to do this
-		handPositions = new();
+		for (int i = handPositions.Count; i != cardsInHand.Count; i += increment) {
+			if (increment < 0) {
+				handPositions.RemoveAt(handPositions.Count - 1);
+			} else {
+				HandPosition newHandPos = (HandPosition)handPosScene.Instantiate();
+				handPositions.Add(newHandPos);
+				AddChild(newHandPos);
+			}
+		}
 
 		for (int i = 0; i < cardsInHand.Count; i++) {
-			HandPosition newHandPos = (HandPosition)handPosScene.Instantiate();
-			handPositions.Add(newHandPos);
-			AddChild(newHandPos);
-			newHandPos.SetPosInHand(i);
-			newHandPos.AcceptNewCard(cardsInHand[i]);
+			HandPosition handPos = handPositions[i];
+			handPos.SetPosInHand(i);
+			handPos.AcceptNewCard(cardsInHand[i]);
 		}
 
 		// calculate arbitrary values to place cards with arbitrarily
