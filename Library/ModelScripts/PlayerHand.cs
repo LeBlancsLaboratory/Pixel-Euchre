@@ -275,13 +275,11 @@ public partial class PlayerHand : Control
 	private void DiscardToGamePile(Card card) {
 		if (card.GetCurrentHandPos() != null && card.GetCurrentHandPos().GetPosInHand() != -1) {
 			// in euchre the turn would end after a single discard
-			//EndTurn();
+			EndTurn();
 
 			card.SetCurrentHandPos(negativePosition);
 
 			AlignCardIndexToHandPosition();
-
-			GetViewport().SetInputAsHandled();
 			RemoveChild(card.GetModel());
 
 			cardsInHand.Remove(card);
@@ -338,6 +336,7 @@ public partial class PlayerHand : Control
 
 		for (int i = handPositions.Count; i != cardsInHand.Count; i += increment) {
 			if (increment < 0) {
+				RemoveChild(handPositions[handPositions.Count - 1]);
 				handPositions.RemoveAt(handPositions.Count - 1);
 			} else {
 				HandPosition newHandPos = (HandPosition)handPosScene.Instantiate();

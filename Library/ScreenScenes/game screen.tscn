@@ -1,5 +1,6 @@
-[gd_scene load_steps=6 format=3 uid="uid://cd366ms84a0gb"]
+[gd_scene load_steps=7 format=3 uid="uid://cd366ms84a0gb"]
 
+[ext_resource type="Texture2D" uid="uid://dhby23tv8r0ad" path="res://Images/samplebg.png" id="1_7cimk"]
 [ext_resource type="Script" path="res://Library/ModelScripts/PlayerHand.cs" id="1_xu4jg"]
 [ext_resource type="Texture2D" uid="uid://ba72wgy3ppee2" path="res://Images/feltTile.png" id="2_fgpm1"]
 [ext_resource type="Script" path="res://Library/ModelScripts/PlayerDiscard.cs" id="3_2hy6m"]
@@ -28,19 +29,20 @@ offset_bottom = 1080.0
 layout_mode = 0
 offset_right = 1920.0
 offset_bottom = 1080.0
+texture = ExtResource("1_7cimk")
 
 [node name="PlayerHand" type="Control" parent="."]
 anchors_preset = 0
-offset_left = 932.0
-offset_top = 868.0
-offset_right = 972.0
-offset_bottom = 908.0
+offset_left = 961.0
+offset_top = 870.0
+offset_right = 1001.0
+offset_bottom = 910.0
 scale = Vector2(0.997543, 0.939524)
 mouse_filter = 2
 script = ExtResource("1_xu4jg")
 
 [node name="PlayerHandBoundary" type="Area2D" parent="PlayerHand"]
-position = Vector2(0, 2)
+position = Vector2(0, -6.10352e-05)
 scale = Vector2(0.71931, 0.760002)
 
 [node name="HandOutline" type="CollisionShape2D" parent="PlayerHand/PlayerHandBoundary"]
@@ -57,12 +59,13 @@ metadata/_edit_use_anchors_ = true
 
 [node name="PlayerDiscard" type="Control" parent="."]
 anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
+offset_left = 961.0
+offset_top = 663.0
+offset_right = 1001.0
+offset_bottom = 703.0
 script = ExtResource("3_2hy6m")
 
 [node name="DiscardBoundary" type="Area2D" parent="PlayerDiscard"]
-position = Vector2(932, 663)
 
 [node name="DiscardOutline" type="CollisionShape2D" parent="PlayerDiscard/DiscardBoundary"]
 shape = SubResource("RectangleShape2D_8cyh5")
