@@ -1,22 +1,29 @@
 [gd_scene load_steps=4 format=3 uid="uid://bkoatndadknnd"]
 
 [ext_resource type="Script" path="res://Library/ModelScripts/CardModel.cs" id="1_1svgv"]
-[ext_resource type="Texture2D" uid="uid://cnf2vgjck5qua" path="res://Images/seven of clubs.png" id="2_vayav"]
+[ext_resource type="Texture2D" uid="uid://dpyvqi2v2bq8u" path="res://Images/GildedDeck/7-of-clubs.png" id="2_us5fv"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_v38uc"]
-size = Vector2(110, 158)
+size = Vector2(162.025, 241.003)
 
 [node name="CardModel" type="Node2D"]
-position = Vector2(54, 80)
+texture_filter = 1
+position = Vector2(81, 120)
+rotation = 0.00113318
 script = ExtResource("1_1svgv")
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
-scale = Vector2(0.180218, 0.180218)
-texture = ExtResource("2_vayav")
+[node name="CardFace" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(4.76837e-06, 1.43051e-05)
+scale = Vector2(1.5, 1.5)
+texture = ExtResource("2_us5fv")
 
 [node name="Area2D" type="Area2D" parent="."]
+texture_filter = 1
+position = Vector2(3.07346e-07, 5.96046e-08)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+texture_filter = 1
 shape = SubResource("RectangleShape2D_v38uc")
 
 [connection signal="mouse_entered" from="Area2D" to="." method="OnMouseEnter"]

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dhby23tv8r0ad"
-path="res://.godot/imported/samplebg.png-c0d6aa9f199d8be80cf63f6471ec5503.ctex"
+uid="uid://c4dpdf0bsmsks"
+path="res://.godot/imported/7-of-hearts.png-3a79384a2195ae755aafde6909dd8b53.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Images/samplebg.png"
-dest_files=["res://.godot/imported/samplebg.png-c0d6aa9f199d8be80cf63f6471ec5503.ctex"]
+source_file="res://Images/GildedDeck/7-of-hearts.png"
+dest_files=["res://.godot/imported/7-of-hearts.png-3a79384a2195ae755aafde6909dd8b53.ctex"]
 
 [params]
 
@@ -31,4 +31,4 @@ process/normal_map_invert_y=false
 process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
-detect_3d/compress_to=0
+detect_3d/compress_to=1

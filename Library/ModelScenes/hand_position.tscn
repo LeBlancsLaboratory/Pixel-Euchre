@@ -2,17 +2,19 @@
 
 [ext_resource type="Script" path="res://Library/ModelScripts/HandPosition.cs" id="1_shxpe"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_v38uc"]
-size = Vector2(110, 158)
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_0mxx5"]
+size = Vector2(162.059, 240.115)
 
 [node name="HandPosition" type="Node2D"]
-position = Vector2(54, 80)
+position = Vector2(81, 120)
 script = ExtResource("1_shxpe")
 
 [node name="Area2D" type="Area2D" parent="."]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
-shape = SubResource("RectangleShape2D_v38uc")
+texture_filter = 1
+position = Vector2(-0.0761719, -0.0710831)
+shape = SubResource("RectangleShape2D_0mxx5")
 
 [connection signal="mouse_entered" from="Area2D" to="." method="OnMouseEnter"]
 [connection signal="mouse_exited" from="Area2D" to="." method="OnMouseExit"]

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dhby23tv8r0ad"
-path="res://.godot/imported/samplebg.png-c0d6aa9f199d8be80cf63f6471ec5503.ctex"
+uid="uid://dv5ef0spptt3q"
+path="res://.godot/imported/7-of-spades.png-4ed2baa5310e84c9eef96c8b9c16da75.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Images/samplebg.png"
-dest_files=["res://.godot/imported/samplebg.png-c0d6aa9f199d8be80cf63f6471ec5503.ctex"]
+source_file="res://Images/GildedDeck/7-of-spades.png"
+dest_files=["res://.godot/imported/7-of-spades.png-4ed2baa5310e84c9eef96c8b9c16da75.ctex"]
 
 [params]
 
@@ -31,4 +31,4 @@ process/normal_map_invert_y=false
 process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
-detect_3d/compress_to=0
+detect_3d/compress_to=1

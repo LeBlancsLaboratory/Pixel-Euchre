@@ -117,7 +117,7 @@ public partial class PlayerHand : Control
 			newRotation = (float)(Math.PI / 2 / rightBoundary) * (float)(position.X / 2);
 		} else if (position.X < centerX) {
 			newRotation = (float)(Math.PI / 2 / leftBoundary) * -(float)(position.X / 2);
-		}
+		}		
 
 		return newRotation;
 	}
@@ -149,7 +149,7 @@ public partial class PlayerHand : Control
 	/// <param name="card">Card to tween</param>
 	/// <param name="position">Position to tween to</param>
 	/// <param name="interval">Interval at which card tweens in seconds</param>
-	/// <param name="parallel">Bool representing whether tweener will await tween to finish
+	/// <param name="wait">Bool representing whether tweener will await tween to finish
 	private async void TweenCardToNewPosition(Card card, Vector2 position, double interval=-1, bool wait=false) {
 		if (interval < 0) {interval = CARD_TWEEN_INTERVAL;}
 		Tween tween = GetTree().CreateTween();
@@ -429,10 +429,10 @@ public partial class PlayerHand : Control
 					float newY = centerY;
 					switch (Math.Abs(i - 2)) {
 						case 1:
-							newY = (float)(centerY + fifteenthPosHeight / 3);
+							newY = (float)(centerY + fifteenthPosHeight / 2);
 							break;
 						case 2:
-							newY = (float)(centerY + fifteenthPosHeight * 1.25);
+							newY = (float)(centerY + fifteenthPosHeight * 2);
 							break;
 					}
 
