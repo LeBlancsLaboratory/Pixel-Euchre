@@ -9,7 +9,7 @@
 size = Vector2(845.93, 484.567)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_8cyh5"]
-size = Vector2(498, 153.5)
+size = Vector2(498, 216.75)
 
 [node name="Game" type="Control"]
 layout_mode = 3
@@ -36,9 +36,9 @@ texture = ExtResource("1_u4825")
 [node name="PlayerHand" type="Control" parent="."]
 anchors_preset = 0
 offset_left = 321.0
-offset_top = 275.0
+offset_top = 291.0
 offset_right = 361.0
-offset_bottom = 315.0
+offset_bottom = 331.0
 scale = Vector2(0.357545, 0.379524)
 mouse_filter = 2
 script = ExtResource("1_xu4jg")
@@ -62,15 +62,16 @@ stretch_mode = 1
 [node name="PlayerDiscard" type="Control" parent="."]
 anchors_preset = 0
 offset_left = 321.0
-offset_top = 175.0
+offset_top = 178.0
 offset_right = 361.0
-offset_bottom = 215.0
+offset_bottom = 218.0
 scale = Vector2(0.36, 0.399999)
 script = ExtResource("3_2hy6m")
 
 [node name="DiscardBoundary" type="Area2D" parent="PlayerDiscard"]
 
 [node name="DiscardOutline" type="CollisionShape2D" parent="PlayerDiscard/DiscardBoundary"]
+position = Vector2(0, 0.874878)
 shape = SubResource("RectangleShape2D_8cyh5")
 
 [connection signal="input_event" from="PlayerHand/PlayerHandBoundary" to="PlayerHand" method="HandleHandAreaInput"]

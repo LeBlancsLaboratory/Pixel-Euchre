@@ -275,7 +275,7 @@ public partial class PlayerHand : Control
 	private void DiscardToGamePile(Card card) {
 		if (card.GetCurrentHandPos() != null && card.GetCurrentHandPos().GetPosInHand() != -1) {
 			// in euchre the turn would end after a single discard
-			EndTurn();
+			// EndTurn();
 
 			card.SetCurrentHandPos(negativePosition);
 
@@ -387,7 +387,7 @@ public partial class PlayerHand : Control
 					
 					float newPosY = centerY;
 					if (i == 0 || i == 2) {
-						newPosY += (float)(fifteenthPosHeight / 3);
+						newPosY += (float)(fifteenthPosHeight / 2);
 					}
 
 					Vector2 newPos = new Vector2(newPosX, newPosY);
@@ -410,7 +410,7 @@ public partial class PlayerHand : Control
 					float newY = centerY;
 
 					if (i == 0 || i == 3) {
-						newY += (float)(fifteenthPosHeight / 1.5);
+						newY += fifteenthPosHeight;
 					}
 
 					Vector2 newPos = new Vector2(case4XPos, newY);
