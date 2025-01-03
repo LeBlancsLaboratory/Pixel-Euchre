@@ -1,8 +1,7 @@
-[gd_scene load_steps=7 format=3 uid="uid://cd366ms84a0gb"]
+[gd_scene load_steps=6 format=3 uid="uid://cd366ms84a0gb"]
 
 [ext_resource type="Texture2D" uid="uid://c1wqoth2heigp" path="res://Images/samplebg-small.png" id="1_u4825"]
 [ext_resource type="Script" path="res://Library/ModelScripts/PlayerHand.cs" id="1_xu4jg"]
-[ext_resource type="Texture2D" uid="uid://ba72wgy3ppee2" path="res://Images/feltTile.png" id="2_fgpm1"]
 [ext_resource type="Script" path="res://Library/ModelScripts/PlayerDiscard.cs" id="3_2hy6m"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_h1opd"]
@@ -56,7 +55,6 @@ offset_top = -242.0
 offset_right = 425.0
 offset_bottom = 136.0
 scale = Vector2(1, 1.2801)
-texture = ExtResource("2_fgpm1")
 stretch_mode = 1
 
 [node name="PlayerDiscard" type="Control" parent="."]

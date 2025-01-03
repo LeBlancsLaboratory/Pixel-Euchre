@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dpyvqi2v2bq8u"
-path="res://.godot/imported/7-of-clubs.png-d74b1b19a809583b99a0db2dd3736ff2.ctex"
+uid="uid://2aee2cxuc0q0"
+path="res://.godot/imported/10_spades.png-1689d242339cc358597f9ad6d33b39e2.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Images/GildedDeck/7-of-clubs.png"
-dest_files=["res://.godot/imported/7-of-clubs.png-d74b1b19a809583b99a0db2dd3736ff2.ctex"]
+source_file="res://Images/GildedDeck/10_spades.png"
+dest_files=["res://.godot/imported/10_spades.png-1689d242339cc358597f9ad6d33b39e2.ctex"]
 
 [params]
 

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cji344up5v8a4"
-path="res://.godot/imported/7-of-diamonds.png-019cd16440ef0cc44419979936cf5b30.ctex"
+uid="uid://c6bix1j5833rm"
+path="res://.godot/imported/3_hearts.png-3029af23178a9e841a51373eea692d26.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Images/GildedDeck/7-of-diamonds.png"
-dest_files=["res://.godot/imported/7-of-diamonds.png-019cd16440ef0cc44419979936cf5b30.ctex"]
+source_file="res://Images/GildedDeck/3_hearts.png"
+dest_files=["res://.godot/imported/3_hearts.png-3029af23178a9e841a51373eea692d26.ctex"]
 
 [params]
 

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dv5ef0spptt3q"
-path="res://.godot/imported/7-of-spades.png-4ed2baa5310e84c9eef96c8b9c16da75.ctex"
+uid="uid://cy6dwn745lg0l"
+path="res://.godot/imported/A_hearts.png-c88d907c169bd68b66bc11735df06479.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Images/GildedDeck/7-of-spades.png"
-dest_files=["res://.godot/imported/7-of-spades.png-4ed2baa5310e84c9eef96c8b9c16da75.ctex"]
+source_file="res://Images/GildedDeck/A_hearts.png"
+dest_files=["res://.godot/imported/A_hearts.png-c88d907c169bd68b66bc11735df06479.ctex"]
 
 [params]
 
