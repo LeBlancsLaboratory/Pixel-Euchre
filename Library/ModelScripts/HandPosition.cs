@@ -1,6 +1,6 @@
 using Godot;
 using System;
-using EuchreObjects;
+using PixelEuchre.Library.EuchreObjects;
 using System.Xml.Serialization;
 
 public partial class HandPosition : Node2D

@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://bkoatndadknnd"]
 
-[ext_resource type="Script" path="res://Library/ModelScripts/CardModel.cs" id="1_1svgv"]
+[ext_resource type="Script" uid="uid://cyeg51iarwgh" path="res://Library/ModelScripts/CardModel.cs" id="1_1svgv"]
 [ext_resource type="Texture2D" uid="uid://dpyvqi2v2bq8u" path="res://Images/GildedDeck/7_clubs.png" id="2_us5fv"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_v38uc"]
