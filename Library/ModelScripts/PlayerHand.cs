@@ -38,7 +38,7 @@ public partial class PlayerHand : Control
 	}
 
 	private void EndTurn() {
-		discardActive = false;
+		_discardActive = false;
 	}
 
 	// Called when the node enters the scene tree for the first time.
@@ -286,7 +286,7 @@ public partial class PlayerHand : Control
 			AlignCardIndexToHandPosition();
 			RemoveChild(card.GetModel());
 
-			cardsInHand.Remove(card);
+			_cardsInHand.Remove(card);
 
 			_discard.DiscardToGamePile(card);
 
