@@ -37,7 +37,7 @@ public partial class PlayerHand : Control
 		discardActive = true;
 	}
 
-	public void EndTurn() {
+	private void EndTurn() {
 		discardActive = false;
 	}
 
@@ -280,9 +280,9 @@ public partial class PlayerHand : Control
 			card.SetCurrentHandPos(negativePosition);
 
 			AlignCardIndexToHandPosition();
-			RemoveChild(card.GetModel());
-
 			cardsInHand.Remove(card);
+			
+			RemoveChild(card.GetModel());
 
 			discard.DiscardToGamePile(card);
 

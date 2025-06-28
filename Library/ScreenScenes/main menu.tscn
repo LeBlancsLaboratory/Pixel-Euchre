@@ -1,9 +1,9 @@
 [gd_scene load_steps=5 format=3 uid="uid://c6gmpgaxvo1iq"]
 
-[ext_resource type="Script" path="res://Library/ModelScripts/MenuScreen.cs" id="1_ugwmo"]
-[ext_resource type="Script" path="res://Library/ModelScripts/PlayBtn.cs" id="2_86431"]
-[ext_resource type="Script" path="res://Library/ModelScripts/OptBtn.cs" id="3_mrmr3"]
-[ext_resource type="Script" path="res://Library/ModelScripts/ExitBtn.cs" id="4_o2icl"]
+[ext_resource type="Script" uid="uid://c7ansapro3lus" path="res://Library/ModelScripts/MenuScreen.cs" id="1_ugwmo"]
+[ext_resource type="Script" uid="uid://dkpbc2gpiudhb" path="res://Library/ModelScripts/PlayBtn.cs" id="2_86431"]
+[ext_resource type="Script" uid="uid://b3p386akmxd2r" path="res://Library/ModelScripts/OptBtn.cs" id="3_mrmr3"]
+[ext_resource type="Script" uid="uid://m2cdh1ivv778" path="res://Library/ModelScripts/ExitBtn.cs" id="4_o2icl"]
 
 [node name="Menu" type="Control"]
 layout_mode = 3

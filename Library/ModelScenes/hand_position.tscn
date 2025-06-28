@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://bmqc05iwd04mx"]
 
-[ext_resource type="Script" path="res://Library/ModelScripts/HandPosition.cs" id="1_shxpe"]
+[ext_resource type="Script" uid="uid://cv0seb55avsk6" path="res://Library/ModelScripts/HandPosition.cs" id="1_shxpe"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_0mxx5"]
 size = Vector2(162.059, 240.115)

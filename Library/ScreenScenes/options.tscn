@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://3noqn7amrd1w"]
 
-[ext_resource type="Script" path="res://Library/ModelScripts/ResDropdown.cs" id="1_yeqv2"]
+[ext_resource type="Script" uid="uid://boetuv0wm0f04" path="res://Library/ModelScripts/ResDropdown.cs" id="1_yeqv2"]
 
 [node name="Options" type="Control"]
 layout_mode = 3
