@@ -1,6 +1,6 @@
-namespace EuchreObjects;
+namespace PixelEuchre.Library.EuchreObjects;
 
-using EuchreEnums;
+using Enums;
 using Godot;
 using System;
 using System.Dynamic;
@@ -11,8 +11,8 @@ public class Card
 	private Image cardFront;
 	private Image cardBack;
 	private CardModel cardModel;
-	private Suit suit;
-	private int rank;
+	private readonly Suit suit;
+	private readonly int rank;
 	private string name;
 
 	private HandPosition currentPos;
@@ -44,7 +44,7 @@ public class Card
 	/// <param name="other"></param>
 	/// <returns>True if both rank and suit are equal</returns>
 	public bool FullyEquals(Card other) {
-		return this.suit == other.suit && this.rank == other.rank;
+		return suit == other.suit && rank == other.rank;
 	}
 
 	public Suit GetSuit() {
@@ -79,10 +79,7 @@ public class Card
 	}
 
 	public Vector2? GetPosition() {
-		if (cardModel != null) {
-			return cardModel.Position;
-		}
-		return null;
+		return cardModel?.Position;
 	}
 
 	public void SetPosition(Vector2 newPosition) {

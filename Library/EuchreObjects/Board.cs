@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Godot;
 
-namespace EuchreObjects;
+namespace PixelEuchre.Library.EuchreObjects;
 
 public class Pile : Hand {
 

@@ -1,6 +1,6 @@
-namespace EuchreObjects;
+namespace PixelEuchre.Library.EuchreObjects;
 
-using EuchreEnums;
+using Enums;
 using Godot;
 using System;
 using System.Collections.Generic;

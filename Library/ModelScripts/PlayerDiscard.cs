@@ -1,4 +1,4 @@
-using EuchreObjects;
+using PixelEuchre.Library.EuchreObjects;
 using Godot;
 using System;
 

@@ -1,4 +1,4 @@
-namespace EuchreObjects;
+namespace PixelEuchre.Library.EuchreObjects;
 
 using Godot;
 using System;

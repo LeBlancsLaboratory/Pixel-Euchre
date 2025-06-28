@@ -1,4 +1,4 @@
-namespace EuchreEnums;
+namespace PixelEuchre.Enums;
 
 public enum Suit {
     Diamonds,
