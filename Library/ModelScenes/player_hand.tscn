@@ -1,0 +1,36 @@
+[gd_scene load_steps=3 format=3 uid="uid://dolwmg6pjnt2q"]
+
+[ext_resource type="Script" uid="uid://b382p0dw5egpr" path="res://Library/ModelScripts/PlayerHand.cs" id="1_ivmfu"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_h1opd"]
+size = Vector2(845.93, 484.567)
+
+[node name="PlayerHand" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 321.0
+offset_top = 291.0
+offset_right = 361.0
+offset_bottom = 331.0
+scale = Vector2(0.357545, 0.379524)
+mouse_filter = 2
+script = ExtResource("1_ivmfu")
+
+[node name="PlayerHandBoundary" type="Area2D" parent="."]
+scale = Vector2(0.71931, 0.760002)
+
+[node name="HandOutline" type="CollisionShape2D" parent="PlayerHandBoundary"]
+position = Vector2(-3.03491, 0)
+shape = SubResource("RectangleShape2D_h1opd")
+
+[node name="TextureRect" type="TextureRect" parent="PlayerHandBoundary/HandOutline"]
+offset_left = -426.0
+offset_top = -242.0
+offset_right = 425.0
+offset_bottom = 136.0
+scale = Vector2(1, 1.2801)
+stretch_mode = 1
+
+[connection signal="input_event" from="PlayerHandBoundary" to="." method="HandleHandAreaInput"]
+[connection signal="mouse_entered" from="PlayerHandBoundary" to="." method="playerHandEntered"]
+[connection signal="mouse_exited" from="PlayerHandBoundary" to="." method="playerHandExited"]

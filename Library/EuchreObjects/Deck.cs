@@ -6,16 +6,17 @@ using System;
 using System.Collections.Generic;
 
 
+
 public class Deck
 {
-	private List<Card> cards;
+	private List<Card> cards = new();
+	private string deckName = "";
 	private Random random = new Random();
 
 	public Deck(bool aceHigh = false) {
 		// do i want to load images for the card here or in the card constructor?
 		int lowestRank = aceHigh ? 1 : 2;
 		int highestRank = aceHigh ? 13 : 14;
-		
 
 		Suit[] suits = {Suit.Diamonds, Suit.Hearts, Suit.Spades, Suit.Spades};
 
@@ -43,8 +44,9 @@ public class Deck
 						break;
 				}
 
+				deckName = DeckNames.GildedDeck.ToString();
+
 				Card newCard = new(rank: i, suit: suit, name: cardName);
-				CardModel newCardModel = (CardModel)GD.Load<PackedScene>("res://card_model.tscn").Instantiate();
 
 				//TODO: add texture to card front and back
 				/* example: 
@@ -55,7 +57,6 @@ public class Deck
 
 				*/
 
-				newCard.SetModel(newCardModel);
 				cards.Add(newCard);
 			}
 		}

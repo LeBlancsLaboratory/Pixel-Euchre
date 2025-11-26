@@ -19,7 +19,8 @@ public class Pile : Hand {
     }
 }
 
-public class Board {
+public class Board
+{
     private Pile pile;
 
     // should i store game rule settings here? would that make any sense?
@@ -29,16 +30,23 @@ public class Board {
 
     private int turn = 0;
 
-    private Deck deck;
+    private Deck _deck;
 
-    public Board(Tuple<Tuple<Player, Player>, Tuple<Player, Player>> teamMates) {
+    public Board(Tuple<Tuple<Player, Player>, Tuple<Player, Player>> teamMates)
+    {
+        players = new();
         // I suppose pair 1 will be 0 and 2, pair 2 will be 1 and 3
-        players[0] = teamMates.Item1.Item1;
-        players[2] = teamMates.Item1.Item2;
-        players[1] = teamMates.Item2.Item1;
-        players[3] = teamMates.Item2.Item2;
+        players.Add(teamMates.Item1.Item1);
+        players.Add(teamMates.Item2.Item1);
+        players.Add(teamMates.Item1.Item2);
+        players.Add(teamMates.Item2.Item2);
 
-        deck = new Deck(aceHigh: true);
-        deck.Shuffle();
+        _deck = new Deck(aceHigh: true);
+        _deck.Shuffle();
+    }
+
+    public override string ToString()
+    {
+        return _deck.ToString();
     }
 } 

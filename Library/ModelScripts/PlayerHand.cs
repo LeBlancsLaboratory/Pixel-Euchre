@@ -9,6 +9,7 @@ namespace PixelEuchre.Library.ModelScripts;
 public partial class PlayerHand : Control
 {
 	private const double CARD_TWEEN_INTERVAL = 0.15;
+	private const double CARD_TWEEN_INTERVAL_REMAKE = 0.025;
 	/// <summary>
 	/// 
 	/// </summary>
@@ -59,8 +60,7 @@ public partial class PlayerHand : Control
 			CardModel newCardModel = (CardModel)GD.Load<PackedScene>("res://Library/ModelScenes/card_model.tscn").Instantiate();
 			newCardModel.Visible = true;
 
-			Card newCard = new(PixelEuchre.Enums.Suit.Clubs, 7, "7");
-			newCard.SetModel(newCardModel);
+			Card newCard = new(Enums.Suit.Clubs, 7, "7", newCardModel);
 
 			cardsForTesting.Add(newCard);
 		}
@@ -129,21 +129,16 @@ public partial class PlayerHand : Control
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
 	{
-		switch (_dragging)
-		{
-			case true when _draggingCard != null:
-			{
-				Vector2 newPosition = GetLocalMousePosition() + _draggingCardOffset;
-				if (!IsPositionInPlayerHand(newPosition)) {
-					StopDragging();
-				} else {
-					_draggingCard.SetPosition(newPosition);
-					SetCardRotationInHandArea(_draggingCard);
-					TestPositionEntered();
-				}
-
-				break;
+		if (_dragging && _draggingCard != null) {
+			Vector2 newPosition = GetLocalMousePosition() + _draggingCardOffset;
+			if (!IsPositionInPlayerHand(newPosition)) {
+				StopDragging();
+			} else {
+				_draggingCard.SetPosition(newPosition);
+				SetCardRotationInHandArea(_draggingCard);
+				TestPositionEntered();
 			}
+
 		}
 	}
 
@@ -184,22 +179,24 @@ public partial class PlayerHand : Control
 	/// <param name="wait">Bool representing whether tweener will await tweens to finish
 	private async void TweenCardToNewPosition(List<Card> cards, List<HandPosition> positions, double interval=-1, bool wait=false) {
 		if (interval < 0) {interval = CARD_TWEEN_INTERVAL;}
-		for (int i = 0; i < cards.Count; i++) {
+		for (int i = 0; i < cards.Count; i++)
+		{
 			Tween tween = GetTree().CreateTween();
-			tween.SetParallel();
+			if (!wait) { tween.SetParallel(); }
 			tween.TweenProperty(
-				cards[i].GetModel(), 
-				"position", 
-				positions[i].Position, 
+				cards[i].GetModel(),
+				"position",
+				positions[i].Position,
 				interval
 			);
 			tween.TweenProperty(
-				cards[i].GetModel(), 
-				"rotation", 
-				CalcCardRotationFromPosition(positions[i].Position), 
+				cards[i].GetModel(),
+				"rotation",
+				CalcCardRotationFromPosition(positions[i].Position),
 				interval
 			);
-			if (wait) {
+			if (wait)
+			{
 				await ToSignal(tween, Tween.SignalName.Finished);
 			}
 		}
@@ -404,9 +401,6 @@ public partial class PlayerHand : Control
 				}
 				break;
 			case 4:
-				float case4XLeftBound = (float)(halfPosWidth * -1.5);
-				float case4XRightBound = (float)(halfPosWidth * 1.5);
-				
 				float case4XPos = (float)(halfPosWidth * -1.5);
 				for (int i = 0; i < 4; i++) {
 					currHandPos = _handPositions[i];

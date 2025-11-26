@@ -1,0 +1,21 @@
+[gd_scene load_steps=3 format=3 uid="uid://bweli2t505rdw"]
+
+[ext_resource type="Script" uid="uid://b3v42xjt7yxyx" path="res://Library/ModelScripts/PlayerDiscard.cs" id="1_nfokn"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_8cyh5"]
+size = Vector2(498, 216.75)
+
+[node name="PlayerDiscard" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 321.0
+offset_top = 178.0
+offset_right = 361.0
+offset_bottom = 218.0
+scale = Vector2(0.36, 0.399999)
+script = ExtResource("1_nfokn")
+
+[node name="DiscardBoundary" type="Area2D" parent="."]
+
+[node name="DiscardOutline" type="CollisionShape2D" parent="DiscardBoundary"]
+shape = SubResource("RectangleShape2D_8cyh5")
