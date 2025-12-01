@@ -33,8 +33,13 @@ public partial class ResDropdown : OptionButton
 
 		int x = splitRes[0].ToInt(); int y = splitRes[1].ToInt();
 
-		GetWindow().Size = new Vector2I(x: x, y: y);
-		GetTree().ReloadCurrentScene();
+		var maxSize = DisplayServer.ScreenGetSize();
+
+		DisplayServer.WindowSetSize(new Vector2I(x: x, y: y));
+		
+		if (maxSize.X != x || maxSize.Y != y) {
+			DisplayServer.WindowSetMode(DisplayServer.WindowMode.Windowed);
+		}
 	}
 
     // Called every frame. 'delta' is the elapsed time since the previous frame.
