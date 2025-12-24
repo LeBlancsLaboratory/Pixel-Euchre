@@ -12,21 +12,19 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="SettingsGrid" type="GridContainer" parent="."]
+[node name="ResContainer" type="HBoxContainer" parent="."]
 layout_mode = 0
-offset_right = 1921.0
-offset_bottom = 1076.0
+offset_top = 1.0
+offset_right = 293.0
+offset_bottom = 32.0
 
-[node name="ResContainer" type="HBoxContainer" parent="SettingsGrid"]
-layout_mode = 2
-
-[node name="ResLabel" type="RichTextLabel" parent="SettingsGrid/ResContainer"]
+[node name="ResLabel" type="RichTextLabel" parent="ResContainer"]
 custom_minimum_size = Vector2(175, 0)
 layout_mode = 2
 text = "Display Resolution"
 visible_characters = 18
 
-[node name="ResDropdown" type="OptionButton" parent="SettingsGrid/ResContainer"]
+[node name="ResDropdown" type="OptionButton" parent="ResContainer"]
 layout_mode = 2
 selected = 0
 item_count = 3
@@ -38,10 +36,15 @@ popup/item_2/text = "1152x648"
 popup/item_2/id = 2
 script = ExtResource("1_yeqv2")
 
-[node name="BackButton" type="TextureButton" parent="SettingsGrid"]
-layout_mode = 2
+[node name="BackButton" type="TextureButton" parent="."]
+layout_mode = 0
+offset_left = 0.99999994
+offset_top = 325.0
+offset_right = 101.0
+offset_bottom = 375.0
+scale = Vector2(0.704656, 0.6858541)
 texture_normal = ExtResource("2_fvh5n")
 script = ExtResource("3_g3pbs")
 
-[connection signal="item_selected" from="SettingsGrid/ResContainer/ResDropdown" to="SettingsGrid/ResContainer/ResDropdown" method="OnItemSelected"]
-[connection signal="pressed" from="SettingsGrid/BackButton" to="SettingsGrid/BackButton" method="OnPressed"]
+[connection signal="item_selected" from="ResContainer/ResDropdown" to="ResContainer/ResDropdown" method="OnItemSelected"]
+[connection signal="pressed" from="BackButton" to="BackButton" method="OnPressed"]
