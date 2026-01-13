@@ -281,11 +281,12 @@ public partial class PlayerHand : Control
 			card.SetCurrentHandPos(_negativePosition);
 
 			AlignCardIndexToHandPosition();
-			RemoveChild(card.GetModel());
 
 			_cardsInHand.Remove(card);
 
-			_discard.DiscardToGamePile(card);
+			RemoveChild(card.GetModel());
+
+			_discard.DiscardToGamePile(card, 0);
 
 			RemakeHandPositionsFromCardIndex();
 			RefreshCardDrawOrder();

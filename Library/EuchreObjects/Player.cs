@@ -11,6 +11,16 @@ public class Player
 	public Player(string name)
 	{
 		this.name = name;
+		hand = new();
+	}
+
+	public Hand GetHand()
+	{
+		if (hand != null)
+		{
+			return hand;
+		}
+		return null;
 	}
 
 	public override string ToString()

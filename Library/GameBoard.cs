@@ -15,7 +15,10 @@ public partial class GameBoard : Control
         Tuple<Player, Player> teamOne = Tuple.Create(playerOne, playerThree);
         Tuple<Player, Player> teamTwo = Tuple.Create(playerTwo, playerFour);
         Tuple<Tuple<Player, Player>, Tuple<Player, Player>> teams = Tuple.Create(teamOne, teamTwo);
-        _board = new(teams);
+
+        PlayerDiscard discard = (PlayerDiscard)GetParent().FindChild("PlayerDiscard");
+
+        _board = new(teams, discard);
     }
 }
 

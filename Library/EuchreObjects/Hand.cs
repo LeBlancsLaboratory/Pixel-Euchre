@@ -52,6 +52,11 @@ public class Hand
 		return lastCard;
 	}
 
+	public Card TopCard()
+	{
+		return cards[cards.Count - 1];
+	}
+
     public override string ToString() {
         string outString = "Hand:\n";
 

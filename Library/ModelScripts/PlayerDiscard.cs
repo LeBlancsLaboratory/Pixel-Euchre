@@ -4,7 +4,7 @@ using System;
 
 public partial class PlayerDiscard : Control
 {
-	// GameBoard board;
+	Board _parentBoard;
 
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
@@ -16,7 +16,17 @@ public partial class PlayerDiscard : Control
 	{
 	}
 
-	public void DiscardToGamePile(Card card) {
-		// add to game pile
+	public bool DiscardToGamePile(Card card, int playerId) {
+		
+		return _parentBoard.AttemptPlayCard(card, playerId);
+
+	}
+
+	public void SetParentBoard(Board board)
+	{
+		if (_parentBoard == null)
+		{
+			_parentBoard = board;
+		}
 	}
 }

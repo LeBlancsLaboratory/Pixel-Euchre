@@ -1,8 +1,8 @@
 [gd_scene load_steps=7 format=3 uid="uid://cd366ms84a0gb"]
 
 [ext_resource type="Script" uid="uid://6tb7v2n032mr" path="res://Library/GameBoard.cs" id="1_1g0ku"]
-[ext_resource type="Texture2D" uid="uid://c1wqoth2heigp" path="res://Images/samplebg-small.png" id="1_u4825"]
 [ext_resource type="Script" uid="uid://b382p0dw5egpr" path="res://Library/ModelScripts/PlayerHand.cs" id="1_xu4jg"]
+[ext_resource type="Texture2D" uid="uid://l1hlp5gv3agb" path="res://Images/board-sprite-square.png" id="2_1g0ku"]
 [ext_resource type="Script" uid="uid://b3v42xjt7yxyx" path="res://Library/ModelScripts/PlayerDiscard.cs" id="3_2hy6m"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_h1opd"]
@@ -32,14 +32,14 @@ layout_mode = 0
 offset_right = 2048.0
 offset_bottom = 1828.0
 scale = Vector2(0.312554, 0.259113)
-texture = ExtResource("1_u4825")
+texture = ExtResource("2_1g0ku")
 
 [node name="PlayerHand" type="Control" parent="."]
 anchors_preset = 0
-offset_left = 321.0
-offset_top = 291.0
-offset_right = 361.0
-offset_bottom = 331.0
+offset_left = 311.0
+offset_top = 290.0
+offset_right = 351.0
+offset_bottom = 330.0
 scale = Vector2(0.357545, 0.379524)
 mouse_filter = 2
 script = ExtResource("1_xu4jg")
@@ -61,10 +61,10 @@ stretch_mode = 1
 
 [node name="PlayerDiscard" type="Control" parent="."]
 anchors_preset = 0
-offset_left = 321.0
-offset_top = 178.0
-offset_right = 361.0
-offset_bottom = 218.0
+offset_left = 311.0
+offset_top = 177.0
+offset_right = 351.0
+offset_bottom = 217.0
 scale = Vector2(0.36, 0.399999)
 script = ExtResource("3_2hy6m")
 

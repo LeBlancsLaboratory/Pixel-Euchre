@@ -30,6 +30,7 @@ public partial class CardModel : Node2D
 
 	private void OnMouseEnter() {
 		clickable = true;
+		GD.Print("clickable");
 	}
 
 	private void OnMouseExit() {
